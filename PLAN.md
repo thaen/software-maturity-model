@@ -12,11 +12,25 @@ Often, it is useful to imagine what happens if we deploy our software directly t
 
 Throughout this document, we will use the example of a calculator. Our company has both a hosted calculator service, exposing APIs like "sum" and "square root". It also ships a physical calculator that runs the same software offline. Both calculators keep a history of all operators performed. The service stores this history in a database. The physical calculator stores it locally.
 
-<TODO: Annotate the sections below with examples from our two hypothetical calculators.>
+TODO: Annotate the sections below with examples from our two hypothetical calculators.
 
 # Scope
 
 The unit under analysis should be the unit of supportability. It is the API a customer sees or the build a customer installs. If a single API is backed by a routing fleet and a storage fleet, monitored with a control plane, backed-up with separate archival software to a separate system, **all of those systems** should be included when assessing maturity. 
+
+# How to use this document
+
+For a given piece of software running in production, we can estimate its maturity level using this document.
+
+1. Define The System: Consider the software as a whole. For a service, include the service (and all its code), any fronting services (routers, load balancers, etc), its control plane, its operational posture, its infrastructure, and its current release process. Include automation and manual processes. The output of this is a descrition of "The System", mostly as a collection of software repositories, deployment resources (such as test environments and deployment pipelines), and infrastructure descriptions.
+
+2. Enumerate the Sources of Change: How does the system change? Use the "Sources of Change" section of this document. Be exhaustive. For services that expose an API intended to be used programmatically, this may require no investigation: we can use the list of Sources of Change that already exist below. The output of this step is a large table describing and categorizing sources of change.
+
+2.1. Quantify the frequency of change: Optionally, quantify how frequently the software experiences each source of change. How often is new software deployed? How often is infrstructure changed? How often does client traffic change? How often does configuration change? The output of this step is numerical frequency in the table of sources of change. This step requires research.
+
+3. Enumerate Mitigation: For each Source of Change, enumerate the ways The System deals with problems that can occur from that source of change. For instance: How does it deal with a failing host? How does it deal with a spike in client traffic traffic? How are new software revisions tested prior to deployment? How are new non-software runtime changes (such as configuration) tested prior to deployment? Once in production, how fast can we detect and mitigate failures for each of these sources of change? The answers here are myriad and require judgment. Most systems try to protect against "Changes to the software that we own" through testing. Other things to consider: if operator action is required to mitigate a problem, maybe a written SOP exists that describes how to perform that work. However, if we can find no evidence that the SOP has ever been executed, that must be noted as part of this step. If systems exist that completely eliminate some kinds of failure, that counts as "mitigation" (for instance, throttling client traffic throughput can eliminate some types of problems with "Changes in inputs".) The output of this step is a list of mitigating factors for every Source of Change.
+
+4. Score: For each source of change, produce a score that describes how well the system is protected against that source of change. 
 
 # Sources of change
 
@@ -42,6 +56,10 @@ This category also includes configuration: changes to behavior that's done by co
 
 ## Changes to infrastructure
 
+Infrastructure are the resources required for our software to run in production. In the old world, "infrastructure" meant "hardware". In the modern world, the line between "infrastructure" and "software we consume" is blurry, but the distinction is still valuable. We will define "infrastructure" as "resources we consume we which do not specifically invoke". All hardware, virtual or otherwise, still fits this model, as do Cloud-equivalents, such as cloud networks.
+
+Infrastructure is under the control (lifecycle and behavior) of other entities, and thus it can change without our knowledge. In the old world, this meant "hardware can fail". In the new world, the failure mode is similar, but the causes are unknown. 
+
 ## Changes to inputs
 
 Customers can change their behavior. For instance, they may start issuing operations more rapidly or increase the amount of data in each operation. Note that in this case, malicious actors attempting DDOS are lumped into "customers". 
@@ -54,19 +72,21 @@ Changes from any source can impact:
 3. Resource utilization or efficiency
 4. Localization, globalization
 5. Security
-6. <TODO fill this in>
+6. TODO, fill this in more completely.
 
 # Summary of types and qualities of change
 
-<TODO make a table here>
+TODO, make a table here
 
 # Strategies to mitigate problems
 
 Imagine we deploy a breaking change to our production environment, **assembling** an environment where our software executes. Our customers are using the platform, performing various **actions**. Each time they do this, they **assert** whether their goal was accomplished. If it was not, or if there was a problem or sub-par experience while doing so, we get a ticket. An operator works to mitigate the problem, then fix the root cause, and deploy a new version. The loop is:
 
+```
 Assemble -> Act -> Assert -> Notify -> Mitigate -> Repair
     ^                  |                             |
-    \------------------------------------------------/
+    \--------<-------------<------------<------------/
+```
 
 "Assemble, Act, Assert" is the classic test loop. "Notify, Mitigate, Repair" are the primary tasks of operational work.
 
@@ -104,17 +124,21 @@ In general, systems with more pre-production environments are more mature.
 
 ### Pre-production environment fidelity
 
+Production environments are often large, created with many hosts and the most capable hardware we can justify paying for. This can cause its own problems, as our software may behave differently when exposed to high-performance hardware, large fleets, or other differences between pre-production environments and production.
 
+How well pre-production matches production is called "fidelity". Fidelity can be measured across all the axes described in the **Sources of Change** section, above. For instance, a pre-production environment which replicates "changes to infrastructure" accurately must also replicate the production infrastructure itself: The same hosts, the same network configuration, the same hardware. Similarly, a pre-production environment which replicates "Changes to inputs" accurately probably does so with real production traffic shadowed to the pre-prod environment; or, it has a sophisticated traffic-generation framework that uses production metrics to create production-like traffic.
+
+While perfect fidelity is almost never possible or desirable, in general, systems with higher-fidelity are more mature.
 
 ## Traffic protections
 
 Changes in customer behavior can be problematic and our system should protect itself against them. For instance, malicious actor detection can help protect valid traffic against malicious DDOS behavior. Throttling (which can be manual or automated) can be used to protect software from congestion collapse in the face of malicious or benign DDOS behavior. Hard limits on inputs (such as payload size) can do the same. Note that often, systems which implement these features must themselves be tested in pre-production environemnts.
 
-In general, a service with more such protections is more mature.
+In general, systems with more such protections are more mature.
 
 ## Operator knowledge, instruction, action, and escalation
 
-Operators are part of the 
+Operators are part of the mitigation story, as are the control planes and manual Standard Operating Procedures (SOPs). In general, systems with more sophisticated control plans and more comprehensive SOPs are more mature. 
 
 # Wait, where are the Tests?
 
