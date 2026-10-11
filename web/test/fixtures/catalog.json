@@ -1,0 +1,304 @@
+{
+  "schemaVersion": 1,
+  "revision": 0,
+  "updatedAt": "2026-10-11T00:00:00.000Z",
+  "nodes": [
+    {
+      "id": "S1",
+      "parentId": null,
+      "level": "category",
+      "title": "Owned software",
+      "description": "This profile applies to code and executable behavior that the assessed team builds or maintains. It includes a release whose behavior changes when code behind an existing control is enabled. It does not include a change to the control's value, which is S4, or a change to deployment assembly, which is S3.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+    },
+    {
+      "id": "S1.1",
+      "parentId": "S1",
+      "level": "subcategory",
+      "title": "API and business behavior",
+      "description": "Request, API, business-rule, or algorithm behavior changes.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+    },
+    {
+      "id": "S1.1.1",
+      "parentId": "S1.1",
+      "level": "kind",
+      "title": "Business-rule revision",
+      "description": "A release changes a calculation, eligibility rule, or other decision visible to users.",
+      "origin": "draft",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+    },
+    {
+      "id": "S1.1.2",
+      "parentId": "S1.1",
+      "level": "kind",
+      "title": "API response revision",
+      "description": "A release changes the fields, status codes, or ordering returned by an endpoint.",
+      "origin": "draft",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+    },
+    {
+      "id": "S1.2",
+      "parentId": "S1",
+      "level": "subcategory",
+      "title": "Jobs and workers",
+      "description": "Background-job, worker, scheduler, or batch-processing code changes.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+    },
+    {
+      "id": "S1.3",
+      "parentId": "S1",
+      "level": "subcategory",
+      "title": "Data and persistence code",
+      "description": "Data-access, caching, serialization, or persistent-state handling code changes.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+    },
+    {
+      "id": "S1.4",
+      "parentId": "S1",
+      "level": "subcategory",
+      "title": "Errors and recovery",
+      "description": "Error handling, retry, recovery, or degradation behavior changes.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+    },
+    {
+      "id": "S1.5",
+      "parentId": "S1",
+      "level": "subcategory",
+      "title": "Performance and concurrency",
+      "description": "Performance, concurrency, queueing, memory, or resource-use behavior changes.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+    },
+    {
+      "id": "S1.6",
+      "parentId": "S1",
+      "level": "subcategory",
+      "title": "Security and data handling",
+      "description": "Authorization, secret handling, sensitive-data handling, or audit behavior changes.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+    },
+    {
+      "id": "S1.7",
+      "parentId": "S1",
+      "level": "subcategory",
+      "title": "Generated behavior and models",
+      "description": "Generated code, owned models, rulesets, or other executable behavior owned by the team.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+    },
+    {
+      "id": "S2",
+      "parentId": null,
+      "level": "category",
+      "title": "Consumed software",
+      "description": "This profile applies to libraries, frameworks, SDKs, language runtimes, plugins, and transitive packages that execute in the system process. It does not cover a remote service that the system calls, which is S9, or the declaration that assembles an installed image, which is S3.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+    },
+    {
+      "id": "S2.1",
+      "parentId": "S2",
+      "level": "subcategory",
+      "title": "Direct packages",
+      "description": "A direct library, framework, SDK, or plugin version changes.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+    },
+    {
+      "id": "S3",
+      "parentId": null,
+      "level": "category",
+      "title": "Deployment artifacts",
+      "description": "This profile applies to declarations and automation that assemble, deploy, start, schedule, or health-check the system without being its application logic. It does not cover effective runtime configuration or data values, which are S4, or underlying platform behavior, which is S5.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+    },
+    {
+      "id": "S3.1",
+      "parentId": "S3",
+      "level": "subcategory",
+      "title": "Build and assembly",
+      "description": "Build, package, image, or artifact-assembly definitions change.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+    },
+    {
+      "id": "S4",
+      "parentId": null,
+      "level": "category",
+      "title": "Controlled runtime state",
+      "description": "This profile applies to state that changes the behavior or protection of the support boundary without changing its executable code. It includes configuration, flags, data, schemas, access policy, partition maps, and credential configuration. It does not include a code change that reads that state, which is S1.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+    },
+    {
+      "id": "S5",
+      "parentId": null,
+      "level": "category",
+      "title": "Infrastructure and platform",
+      "description": "This profile applies to the hosts, containers, storage, networks, name resolution, capacity, regions, zones, routing topology, operating systems, and managed-platform behavior that support the system. It covers a consumed resource that changes or fails without being called as an application dependency. A remote service called by the system is S9.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+    },
+    {
+      "id": "S6",
+      "parentId": null,
+      "level": "category",
+      "title": "Demand and transport",
+      "description": "This profile applies when demand changes independently of what requests mean. It includes benign and malicious traffic. It does not cover a payload, operation, or parameter combination that makes one request expensive or unsafe, which is S7.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+    },
+    {
+      "id": "S6.1",
+      "parentId": "S6",
+      "level": "subcategory",
+      "title": "Sustained growth",
+      "description": "Sustained request-rate, concurrency, or connection-count growth occurs.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+    },
+    {
+      "id": "S6.1.1",
+      "parentId": "S6.1",
+      "level": "kind",
+      "title": "Request-rate growth",
+      "description": "The arrival rate remains above its former baseline long enough to require a capacity response.",
+      "origin": "draft",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+    },
+    {
+      "id": "S6.1.2",
+      "parentId": "S6.1",
+      "level": "kind",
+      "title": "Concurrent-connection growth",
+      "description": "The number of simultaneous connections or in-flight requests increases over time.",
+      "origin": "draft",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+    },
+    {
+      "id": "S6.2",
+      "parentId": "S6",
+      "level": "subcategory",
+      "title": "Bursts and storms",
+      "description": "A burst, retry storm, recovery surge, or thundering herd occurs.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+    },
+    {
+      "id": "S6.2.1",
+      "parentId": "S6.2",
+      "level": "kind",
+      "title": "Retry storm",
+      "description": "Clients repeat failed requests together, increasing demand while the system is already impaired.",
+      "origin": "draft",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+    },
+    {
+      "id": "S6.2.2",
+      "parentId": "S6.2",
+      "level": "kind",
+      "title": "Recovery surge",
+      "description": "Queued or deferred clients return together after an outage or service restoration.",
+      "origin": "draft",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+    },
+    {
+      "id": "S6.3",
+      "parentId": "S6",
+      "level": "subcategory",
+      "title": "Traffic distribution",
+      "description": "Traffic distribution becomes skewed across tenants, keys, regions, or serving paths.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+    },
+    {
+      "id": "S6.4",
+      "parentId": "S6",
+      "level": "subcategory",
+      "title": "Connection behavior",
+      "description": "Connection lifetime, protocol behavior, retransmission, or transport churn changes.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+    },
+    {
+      "id": "S6.5",
+      "parentId": "S6",
+      "level": "subcategory",
+      "title": "Client transport policy",
+      "description": "A client population changes retry, timeout, caching, or reconnect behavior.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+    },
+    {
+      "id": "S6.6",
+      "parentId": "S6",
+      "level": "subcategory",
+      "title": "Abuse and denial of service",
+      "description": "Abusive or denial-of-service demand changes the load on the service.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+    },
+    {
+      "id": "S7",
+      "parentId": null,
+      "level": "category",
+      "title": "Request meaning",
+      "description": "This profile applies when a request's content, operation, or semantic combination changes the work that the system performs. It differs from S6, which concerns rate and transport behavior without regard to request meaning.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+    },
+    {
+      "id": "S8",
+      "parentId": null,
+      "level": "category",
+      "title": "Internal interactions",
+      "description": "This profile applies to calls, messages, replication, coordination, control-plane commands, and health checks among components inside the unit of supportability. It does not cover a call to a service outside that boundary, which is S9.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+    },
+    {
+      "id": "S9",
+      "parentId": null,
+      "level": "category",
+      "title": "External dependencies",
+      "description": "This profile applies to remote services, data stores, identity providers, certificate authorities, and other resources outside the unit of supportability. It covers availability, latency, contract, credential, data, and semantic changes in those dependencies. It does not cover an in-process library, which is S2.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+    },
+    {
+      "id": "S9.3",
+      "parentId": "S9",
+      "level": "subcategory",
+      "title": "Quotas, cost, and policy",
+      "description": "A dependency changes rate limits, quotas, pricing, capacity, or traffic policy.",
+      "origin": "skill",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+    },
+    {
+      "id": "S9.3.1",
+      "parentId": "S9.3",
+      "level": "kind",
+      "title": "Provider rate-limit revision",
+      "description": "A provider changes a rate limit, quota window, or admission policy.",
+      "origin": "draft",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+    },
+    {
+      "id": "S9.3.2",
+      "parentId": "S9.3",
+      "level": "kind",
+      "title": "Provider pricing revision",
+      "description": "A provider changes the cost of operations, storage, or transferred data.",
+      "origin": "draft",
+      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+    }
+  ]
+}

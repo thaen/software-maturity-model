@@ -11,7 +11,7 @@ import { createCatalogServer } from '../server.mjs';
 const [html, app, seedText] = await Promise.all([
   readFile(new URL('../public/index.html', import.meta.url), 'utf8'),
   readFile(new URL('../public/app.js', import.meta.url), 'utf8'),
-  readFile(new URL('../data/catalog.json', import.meta.url), 'utf8')
+  readFile(new URL('./fixtures/catalog.json', import.meta.url), 'utf8')
 ]);
 async function eventually(condition) {
   for (let attempts = 0; attempts < 100; attempts++) {
