@@ -1,5 +1,27 @@
 # Maturity model and analysis
 
+## The implementation sequence was revised on 2026-10-11.
+
+Ethan defined the next work as a webapp that holds the model and makes it possible to review its
+tree. The first implemented surface is a catalog of software change with three columns:
+categories, subcategories, and kinds of change. Parent selection controls the children in the
+next column, while the categories remain available. Each item has a description, CRUD controls,
+text editing by double-click, and drag-and-drop support for ordering and parent membership.
+
+The sequence after that catalog is a generic mitigation catalog, assessment scaffolding, an
+organization-specific approved-practice catalog, aggregation across systems, and opportunity
+analysis. The assessment work unit has a product boundary, one defined source of change, and
+its potential mitigations with maturity descriptions. Its evidence needs review before the
+later analysis can rank opportunities.
+
+The public repository can hold the change and mitigation catalogs, generic assessment workflow,
+and aggregation structure. Airbnb-specific practices and assessment material belong in a work
+repository. Opportunity analysis comes last because both individual protection gaps and patterns
+across teams need the preceding data; the earlier phases have uses on their own.
+
+The conceptual model below remains background for the sequence. Its original four-step process
+does not determine the order of implementation.
+
 This is a skill to help analyze software maturity. It can also assist with other risk and quality analyses, such as failure mode and effects analysis (FMEA).
 
 # Model
