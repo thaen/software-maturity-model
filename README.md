@@ -4,6 +4,9 @@ The webapp is the first step in a software maturity workspace. Its catalog has t
 categories, subcategories, and kinds of change. Selecting a parent shows its children in the next
 column. All categories remain in the first column.
 
+The columns grow with their content, and the browser page owns scrolling. The workflow remains
+in the sidebar. The catalog toolbar has search, history, help, and JSON import and export.
+
 ## The application runs on the local machine.
 
 The application has no runtime dependencies or build step. Its test dependencies support
@@ -90,5 +93,8 @@ branch deletion, editing, import validation, skill references, disk persistence,
 writes, static-file access, and the loopback request boundary. The tests use temporary catalog
 files and do not change the working catalog. The interface checks use jsdom and the real local
 API to verify branch selection, double-click editing, CRUD, undo, redo, search, and plan views.
-These checks do not verify browser layout or native dragging. On 2026-10-11, Chrome blocked the
-local preview with `ERR_BLOCKED_BY_CLIENT`, so those browser checks remain incomplete.
+These checks do not verify browser layout or native dragging. On 2026-10-11, opening a new
+agent tab in Chrome returned `ERR_BLOCKED_BY_CLIENT`, even though the user reported that both
+loopback hosts were allowed. An existing user-opened catalog tab was accessible and reloaded
+successfully. That tab verified the page layout and the absence of scrolling column containers.
+Native dragging remains unverified in the browser.

@@ -251,9 +251,6 @@ function showPhase(index) {
   $('#roadmap-view').hidden = index === 0;
   $('.header-actions').hidden = index !== 0;
   $('#page-label').textContent = phase.title;
-  $('.page-heading .eyebrow').textContent = `${String(index + 1).padStart(2, '0')} / ${index === 0 ? 'THE CHANGE CATALOG' : 'THE PROJECT PLAN'}`;
-  $('h1').textContent = index === 0 ? 'What can change?' : phase.title;
-  $('.page-heading p').textContent = index === 0 ? 'Explore the sources of software change, one branch at a time.' : 'The next steps have a place in the workspace.';
   if (index) $('#roadmap-view').innerHTML = `<div class="roadmap-card"><span class="roadmap-status">${phase.status}</span><h2>This phase follows the change catalog.</h2><p>${phase.description}</p><div class="roadmap-detail"><h3>The intended output is defined.</h3><p>${phase.result}</p><h3>The content has a repository boundary.</h3><p>${phase.scope}</p></div><button class="button primary" data-phase="0">Return to the change catalog</button></div><div class="roadmap-sequence">${phases.map((item, i) => `<button data-phase="${i}" class="${i === index ? 'current' : ''}"><span>0${i + 1}</span><strong>${item.title}</strong><small>${item.status}</small></button>`).join('')}</div>`;
 }
 
