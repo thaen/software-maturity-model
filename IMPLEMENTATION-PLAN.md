@@ -30,9 +30,10 @@ has invented systems and contains no Airbnb material.
 
 ## The records keep different claims separate.
 
-The first catalog extension retains the existing change IDs and `nodes` collection. It adds
-mitigation groups and definitions, applicability links, conditional rules, and mitigation
-relations to a versioned catalog document. Mitigation groups can have nested groups and leaves;
+The first catalog migration retains the existing change IDs and imports the `nodes` collection
+into SQLite tables. It adds mitigation groups and definitions, applicability links, conditional
+rules, and mitigation relations. The [data model and ERDs](DATA-MODEL.md) define the relationships.
+Mitigation groups can have nested groups and leaves;
 the change editor retains its existing three levels. A shared resolver supplies every view.
 
 - A mitigation definition has its purpose, mechanism, scope guidance, evidence expectations,
@@ -44,15 +45,20 @@ the change editor retains its existing three levels. A shared resolver supplies 
   It has a reason and scope or condition. Alternatives are equivalent only within that scope.
 - An approved practice maps one or more generic mitigations to an organization implementation,
   with its operating instructions and constraints. One implementation may serve several systems.
-- A mitigation use names the implementation or local mechanism used by a system, its owner,
-  configuration, covered boundaries, and dependencies. A use does not itself prove effectiveness.
+- A mechanism records the configured protection observed in a run, its owner, boundaries,
+  dependencies, and optional approved implementation. It can map to several mitigation definitions.
+- An observation states what the investigation found about a mechanism, test, interview, search,
+  or other system fact. Evidence links establish or challenge that statement. Claim-observation
+  links explain how the statement bears on a built-in assessment criterion.
 - A system definition has its support boundary, components and interfaces, owners, dependencies,
   assessed repositories, exclusions, workloads, and user outcomes.
 - An outcome has its affected population, measurement, target or tolerance, measurement window,
   and exposure or impact context. Missing values remain unknown rather than being estimated by default.
-- An assessment run has its input snapshot, work items, condition determinations, findings,
-  claims, and evidence. Evidence supports or challenges a named claim and records its source,
-  method, date when known, scope, assumptions, and limits.
+- An assessment run has its input snapshot, expected work, condition determinations, findings,
+  claims, observations, and evidence. Evidence records its source, revision or locator, captured
+  excerpt or inspection result, method, date when known, scope, assumptions, and limits.
+- A review run checks every targeted observation-evidence link, every claim-observation inference,
+  and each conclusion, with separate verdicts and reasons. Its target set is captured before review.
 - An organization capability finding concerns an ability such as ownership, training,
   staffing, standard adoption, or repeated execution. Its assessment scope is a team or
   organization rather than a product boundary.
@@ -79,24 +85,49 @@ The ten source-independent conditional rules remain editable catalog records. A 
 rule proposes candidates for tailoring; it does not declare every listed mitigation applicable.
 Every resulting assessment row retains the reason for selecting its mitigation.
 
-### The storage model preserves the current editing guarantees.
+### The storage model uses SQLite and preserves the editing guarantees.
 
-The first increments extend `web/data/catalog.json` with a new schema version and preserve
-existing definitions, IDs, order, origins, and guidance. Migration is explicit and idempotent.
-It never overwrites later UI edits or runs automatically on each startup. The server retains
-atomic writes, revision conflicts, validation, import and export, and session undo and redo.
-Catalog edits that affect several record types are saved as one revision.
+The first increment migrates `web/data/catalog.json` into SQLite while preserving definitions,
+IDs, order, origins, and guidance. The current runtime still uses JSON until that increment is
+implemented. Migration is explicit and idempotent, preserves the original export, and never
+reloads seed definitions over later UI edits. JSON remains an import and deterministic export
+format for Git review and catalog transfer.
 
-A configured workspace directory outside the public static files holds organization records
-and assessment runs. Each mutable document has its own revision, and each run contains the
-catalog and system context used for that run. Active records have validated references;
-completed runs remain self-contained when the current catalog changes. The application shows
-the active workspace. Export destinations distinguish the generic catalog from workspace data.
+The public catalog database contains generic authoring data. A configured SQLite workspace in
+a work repository holds organization records and imports the catalog snapshot used by each run.
+All assessment references therefore have foreign-key targets in the same database. Foreign-key
+enforcement is enabled on every connection, and transactions cover related mutations. Revision
+checks, import and export, and session undo and redo remain available.
 
-The existing Node server and browser JavaScript remain the implementation base. A database,
-hosted account system, background scheduler, or general graph engine is not needed for these
-increments. New modules separate validation, relationship resolution, assessment preparation,
-and view rendering so the views cannot develop different rules.
+The application shows the active workspace and distinguishes its export from a generic catalog
+export. Completed runs retain their captured definitions and result records. Draft findings can
+be edited; correcting a completed result creates a successor run and preserves earlier reviews.
+This supplies provenance without reassessment or invalidation rules.
+
+The existing Node server and browser JavaScript remain the implementation base. Storage access,
+validation, relationship resolution, assessment preparation, review preparation, and view
+rendering have separate modules. A hosted account system, scheduler, or general graph engine
+is not needed for these increments.
+
+## The visualization and workflow have separate responsibilities.
+
+The visualization has catalog and assessment modes. Catalog mode has the connection list,
+hierarchy matrix, and paired outlines, with relationship reasons, conditions, inheritance,
+exceptions, criteria, and selected dependencies. Its layout remains a way to author and explore
+what protection is expected.
+
+Assessment mode selects a system, boundary, and run. Those same connections show findings and
+investigation coverage. A cell opens the definition, criteria, conclusions, observations,
+mechanisms, evidence excerpts and source links, and review verdicts. A review view proceeds
+change by change and shows pending work, unsupported inferences, contrary evidence, and unknowns.
+The organization view later compares systems and opens the same evidence path.
+
+The investigation workflow prepares the inventory, expected controls, and draft criterion claims
+before the agent works. The agent fills in conditions, observations, mechanisms, evidence links,
+and conclusions or explicit limits. A separate reviewer retrieves the sources and tests each
+support relationship for every selected change. Database constraints establish that references
+exist; completeness checks expose omitted work. Neither check establishes that the source content
+supports the conclusion, which is the reviewer's task.
 
 ## The first increment adds the mitigation editor and migrates the definitions.
 
@@ -115,8 +146,8 @@ description can refer to these criteria, but there is no automatic ladder that e
 automation with maturity or requires an operator procedure to become automated.
 
 The increment is complete when all migrated definitions can be authored and saved, their IDs
-survive moves, and a version-one change catalog migrates without losing user content. Validation,
-persistence, conflict, migration, and editing checks cover those behaviors.
+survive moves, and a version-one change catalog migrates into SQLite without losing user content.
+Validation, transactions, foreign keys, conflicts, migration, and editing checks cover those behaviors.
 
 ## The second increment adds contextual links and mitigation relations.
 
@@ -160,6 +191,10 @@ Explicit unconditional coverage and conditional coverage have separate counts; u
 conditions are not presented as unconditional protection. The relationship details retain
 excluded links. Temporary row and column ordering is for analysis and never reparents records
 or changes their authored order. Search and selection can open the relevant branch.
+
+Assessment mode overlays findings for a selected system, boundary, and run. Selecting a cell
+opens its criteria, observations, mechanisms, evidence, and review results. Pending work and an
+investigated unknown have different labels. The catalog mode retains its applicability legend.
 
 The paired outlines show a selection's paths by default. An optional overview shows all paths.
 Conditional and inherited relationships remain distinguishable, and the lines follow the
@@ -210,9 +245,11 @@ It records examine, interview, and test evidence with the objects and scope insp
 test and exercise results can be examined; running production exercises requires authorization
 outside the ordinary read-only assessment workflow.
 
-Each criterion has a claim, a determination, and supporting or challenging evidence. The
-mitigation summary has present, partial, absent, unknown, or not applicable status with its
-reason. Absence requires a stated search boundary. A procedure without exercise evidence is
+Preparation creates expected-control rows, draft findings, and a pending claim for every
+applicable criterion. Investigation fills in the determination and links the claim to observations.
+Each observation has evidence links, and each inference has its reason. The mitigation summary
+has present, partial, absent, unknown, or not applicable status with its reason. Absence requires
+a stated search boundary. A procedure without exercise evidence is
 not described as exercised, and a configured use is not evidence that every workload is covered.
 
 The assessment also examines conditions in which a mitigation is inadequate or harmful. It
@@ -221,16 +258,30 @@ such as retries increasing overload or rollback conflicting with a schema migrat
 summaries identify unmet prerequisites, scoped alternatives, and shared failure dependencies.
 They preserve each control's observed status and do not inflate coverage by counting linked controls.
 
-The workflow view shows work items, progress, condition determinations, criteria, evidence, and
-findings. It supports correction of imported results and records the basis of an override.
-Automated runs do not require a human approval step for each finding. Workflow completion is a
-count of completed work items, not a protection score.
+The workflow view shows expected and completed work, conditions, criteria, observations,
+evidence, and findings. A mechanism can support several protections, and an observation can
+inform several claims without duplicating either record. Corrections record their basis.
+Automated runs do not require human approval for each finding. Investigation completion means
+every expected item has a determination or explicit limit, not that every control is protected.
 
-The increment is complete when one exported work item can produce a validated finding and
-the UI can trace its outcome claim back to evidence. Example assessments cover documented but
+A separate review command enumerates every claim and support link for the chosen changes, or
+all changes. The review also checks change exclusions and control tailoring, with their reasons
+and observations. It retains excluded or unresolved candidate controls rather than hiding them.
+The reviewer checks the original evidence, its relationship to the observation,
+and the inference to the conclusion. Verdicts are recorded separately for evidence links,
+inferences, and claims. Missing work is visible, and completing the review does not require all
+conclusions to pass. Unknowns, unsupported claims, and inaccessible sources retain their reasons.
+Reviews are distinct from investigation results and do not overwrite the original conclusion.
+
+The increment is complete when one exported work item can produce a validated finding,
+the UI traces its conclusion through observations to evidence, and a review of all changes
+has a check for every expected claim and support link. Example assessments cover documented but
 unexercised recovery, partial workload coverage, unknown access, an unmet prerequisite, a scoped
 alternative, and a mitigation with an adverse effect. The checks exercise actual determination
-rules and reject results that refer to records outside the supplied work item.
+rules and reject results that refer to records outside the supplied work item. A limiter
+example must allow an evidence check for implementation existence to pass while rejecting an
+unsupported inference about coverage of every request. Removing an expected claim or review
+check must leave the relevant investigation or review visibly incomplete.
 
 ## The sixth increment adds organization capabilities and comparisons.
 
@@ -295,9 +346,10 @@ result. Research into ranking can continue without delaying the preceding increm
 ## The review can focus on three proposed choices.
 
 The first choice is to make all three connection views available while retaining the optional
-fourth column as an editing surface. The second is to keep catalog storage in versioned JSON
-and put organization data in a separately configured workspace. The third is to implement
-criterion-level evidence and typed mitigation relations before organization-wide ranking.
+fourth column as an editing surface. Storage is revised to SQLite, with a public catalog and
+organization workspace databases containing their own catalog snapshots. The second choice is
+to use the definition, claim, observation, and evidence path with a separate review pass. The
+third is to implement this evidence path and typed mitigation relations before organization-wide ranking.
 These choices affect the product and implementation scope; routine module names and layout
 details remain implementation decisions.
 

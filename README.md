@@ -92,8 +92,9 @@ Its control defaults, conditions, reasons, and evidence cues will seed the mitig
 The new assessment workflow will consume a revision of the app catalogs; it will not use the
 older profile files as a second authority for change definitions. The proposal for the next
 seven increments is in [IMPLEMENTATION-PLAN.md](IMPLEMENTATION-PLAN.md), with the conceptual
-background in [PLAN.md](PLAN.md). The `fmea/` prototype is a separate local artifact and is not
-part of the webapp.
+background in [PLAN.md](PLAN.md). The [proposed data model](DATA-MODEL.md) has ERDs for
+SQLite storage, investigations, and evidence review. These are proposals; the current runtime
+still saves JSON. The `fmea/` prototype is a separate local artifact and is not part of the webapp.
 
 ## The checks cover catalog invariants and persistence.
 

@@ -56,7 +56,11 @@ run provenance without expiry states or invalidation propagation.
 Generic catalogs and workflow code stay in this repository. Organization implementations,
 system descriptions, evidence, and findings have a separate workspace in a work repository.
 The implementation plan has record boundaries, migration rules, increment acceptance criteria,
-and the proposed choices for review. Implementation has not started under this proposal.
+and the proposed choices for review. The [data model](DATA-MODEL.md) has ERDs and distinguishes
+catalog visualization, investigation, and evidence review. The storage proposal is now SQLite;
+the current application still uses JSON until migration is implemented. Conclusions refer to
+criteria, observations, and evidence, and a separate review checks every support link for the
+selected changes. Implementation has not started under this proposal.
 
 ## The original conceptual model remains background.
 
