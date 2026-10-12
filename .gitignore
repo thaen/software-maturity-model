@@ -2,3 +2,4 @@
 node_modules/
 web/data/*.tmp
 coverage/
+web/data/*.sqlite*

@@ -33,7 +33,7 @@ test('the application serves its assets without exposing skill references or pro
 });
 test('saved changes are on disk and survive another server instance', async t => {
   const { url, dataFile } = await setup(t);
-  const edited = fixture(); edited.nodes[0].title = 'Saved category';
+  const edited = await (await fetch(url + '/api/catalog')).json(); edited.nodes[0].title = 'Saved category';
   edited.description = 'The catalog defines sources within a support boundary.';
   edited.nodes[0].guidance = 'This category has a classification rule.';
   const response = await put(url, edited);
@@ -42,7 +42,7 @@ test('saved changes are on disk and survive another server instance', async t =>
   assert.equal(saved.revision, 1); assert.ok(saved.updatedAt);
   assert.equal(saved.description, edited.description);
   assert.equal(saved.nodes[0].guidance, edited.nodes[0].guidance);
-  assert.equal(JSON.parse(await readFile(dataFile, 'utf8')).nodes[0].title, 'Saved category');
+  assert.equal((await (await fetch(url + '/api/catalog')).json()).nodes[0].title, 'Saved category');
   const second = createCatalogServer({ dataFile }); second.listen(0, '127.0.0.1'); await once(second, 'listening');
   t.after(async () => { second.closeAllConnections(); await new Promise(resolve => second.close(resolve)); });
   const loaded = await (await fetch(`http://127.0.0.1:${second.address().port}/api/catalog`)).json();
@@ -54,7 +54,7 @@ test('concurrent writers cannot silently overwrite each other', async t => {
   first.nodes[0].title = 'First edit'; second.nodes[0].title = 'Second edit';
   const results = await Promise.all([put(url, first), put(url, second)]);
   assert.deepEqual(results.map(result => result.status).sort(), [200, 409]);
-  assert.equal(JSON.parse(await readFile(dataFile, 'utf8')).revision, 1);
+  assert.equal((await (await fetch(url + '/api/catalog')).json()).revision, 1);
 });
 test('invalid imports preserve the previous data', async t => {
   const { url, dataFile } = await setup(t);
@@ -74,5 +74,5 @@ test('foreign origins and non-loopback host headers are rejected', async t => {
     req.on('error', reject); req.end();
   });
   assert.equal(hostStatus, 403);
-  assert.equal(JSON.parse(await readFile(dataFile, 'utf8')).revision, 0);
+  assert.equal((await (await fetch(url + '/api/catalog')).json()).revision, 0);
 });

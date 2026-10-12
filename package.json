@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "start": "node web/server.mjs",
-    "test": "node --test web/test/*.test.mjs"
+    "test": "node --test web/test/*.test.mjs",
+    "export": "node web/scripts/export.mjs"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"

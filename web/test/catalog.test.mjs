@@ -70,7 +70,7 @@ test('catalog scope and node guidance have editable text that survives tree oper
   assert.throws(() => changeCatalog(moved, { type: 'updateCatalog', field: 'revision', value: 5 }));
 });
 test('imports reject duplicate IDs, unknown formats, and oversized or invalid text fields', () => {
-  assert.throws(() => validateCatalog({ ...fixture(), schemaVersion: 2 }));
+  assert.throws(() => validateCatalog({ ...fixture(), schemaVersion: 3 }));
   assert.throws(() => validateCatalog({ ...fixture(), revision: -1 }));
   const duplicate = fixture(); duplicate.nodes.push(duplicate.nodes[0]);
   assert.throws(() => validateCatalog(duplicate));

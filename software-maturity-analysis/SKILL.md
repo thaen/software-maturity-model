@@ -1,113 +1,122 @@
 ---
 name: software-maturity-analysis
-description: Assess an existing software system by comparing evidence of its controls with tailored expected control profiles for sources of change. Use for service maturity reviews, operational maturity assessments, and resilience-control inventories; do not use for failure-mode or risk-priority analysis.
+description: Investigate a software system against an exported change and mitigation catalog, with mechanisms, observations, evidence, criterion conclusions, and a separate review of their support. Use for software maturity and resilience-control investigations; do not use for failure-mode scoring or risk-priority numbers.
 ---
 
-# The skill produces an evidence-based maturity analysis.
+# The Skill investigates protection against software change.
 
-The skill assesses how a system limits, detects, and recovers from changes that can affect its
-users. The unit under review is the unit of supportability, not merely one repository or one
-deployed process.
+The investigation compares a system's protections with definitions supplied by the catalog.
+The webapp owns those definitions. A run uses a frozen version 2 JSON export, including change
+categories, subcategories, kinds, mitigation criteria, applicability reasons, conditions,
+outcomes, and mitigation dependencies. Do not substitute the catalog's initial reference
+files or recollection for that export. Missing definitions are questions for the catalog
+owner; an investigation does not silently rewrite them.
 
-The skill does not create failure modes, calculate risk-priority numbers, or require a
-database. It compares the observed control profile of a system with an expected control profile
-that is tailored to its support boundary.
+The unit of supportability includes the customer interface or installed release, components,
+deployment and control planes, infrastructure, dependencies, and operator procedures. Product
+protection differs from organization capability. A practice being approved by an organization
+is not evidence that the assessed system uses it.
 
-## The assessment has six defined phases.
+## The system description defines the investigation boundary.
 
-The agent may return to an earlier phase when new evidence changes the support boundary, a
-source classification, or a control's applicability. The phase outputs make that iteration
-visible rather than treating it as an error.
+Read the system description and available evidence before selecting work. Record owners,
+components, interfaces, repositories and revisions, operating paths, dependency responsibilities,
+exclusions, evidence access, and user outcomes with targets and consequences when known.
+Distinguish client-owned controls from provider guarantees, configuration values from their
+propagation, deployment artifacts from platform behavior, and demand from request meaning.
+An unresolved responsibility or boundary remains an explicit question.
 
-### Phase 1 frames the assessment.
+Read [the record format](references/record-format.md) to prepare the run and use its helper.
+Keep private system information, evidence, and results in the system's work repository.
+The public catalog contains generic definitions. A run captures its input revision and
+catalog snapshot; later authoring edits do not alter that snapshot.
 
-The agent identifies the customer-facing interface or installed release, dependent components,
-control and deployment planes, supporting infrastructure, manual operating procedures, owners,
-and exclusions. It records the user outcomes in scope: correctness and data integrity,
-availability and durability, latency and capacity, security and privacy, compatibility, and
-resource efficiency.
+## The expected work exists before conclusions are written.
 
-The phase input is the available system description and evidence access. Its output is a scoped
-support-boundary statement, a list of components and interfaces, known change history or
-incidents, and stated evidence limits. The phase ends when the agent can name the boundary that
-each later row will assess; a missing boundary remains an explicit uncertainty.
+Prepare a row for every catalog change within each boundary. Determine whether each is
+selected, excluded, or unresolved, with a reason. A parent exclusion requires an explicit
+reason on every descendant; a missing child row is an omission. Investigate parent categories
+as scope and classification decisions as well as assessing their child paths. Avoid claiming
+that draft example kinds exhaust the scope of their parent.
 
-The agent resolves queue ownership, shared-platform ownership, and the client or provider role
-for each dependency before it selects a source profile. It distinguishes deployment artifacts
-from platform behavior, configuration propagation from the configuration state it changes, and
-demand behavior from request meaning. An unresolved boundary becomes an explicit classification
-question rather than an assumed source.
+For each boundary/change pair, evaluate every conditional rule. Tailor inherited and direct
+baseline candidates, conditional candidates, and prerequisites. Retain excluded and unresolved
+candidates with reasons, along with every contributing applicability link, rule, or manual
+addition. An inherited exception suppresses its named baseline, not independent reasons to
+select the same mitigation. A condition is a hypothesis to examine, not a claim that a control
+exists. Scope-specific alternatives and shared failure dependencies prevent counting protections
+as independent merely because they have different IDs.
 
-### Phase 2 builds the expected control profile.
+The helper scaffolds pending findings and one pending claim for every criterion of every
+candidate mitigation. Pending differs from investigated unknown. Use `scaffold` after tailoring
+conditions to align the expected rows. Do not delete difficult work or invent evidence to
+satisfy a field. Excluded rows receive not-applicable conclusions with their reasons; unresolved
+rows receive unknown conclusions and the missing facts.
 
-The agent classifies applicable sources of change and reads the corresponding files in
-[the source profiles](references/source-profiles/). A source profile supplies child change
-vectors, default mitigation IDs, selection reasons, and evidence cues. The agent tailors each
-default set to the component or interface in scope, adds controls for a material path that the
-profile does not cover, and records a reason for every removed control.
+## Each work item has one boundary and one change definition.
 
-When the child vector is known, the agent starts with that vector's baseline and conditional
-controls rather than the full source-level coverage set. It uses the source-level set only when
-the vector remains unknown or when it needs to identify a missed conditional control.
+Use the helper's `work-item` command to obtain the boundary, change definition and guidance,
+conditions, candidate mitigations, selection reasons, criteria, maturity descriptions, and
+pending rows. Follow the relevant paths rather than handing the whole catalog to one unbounded
+prompt. Record findings in the run, preserving IDs and the captured definitions.
 
-For every applicable source, the agent makes a vector inventory that marks each child vector as
-selected, excluded with a reason, or awaiting discovery. It reads [the conditional-control
-rules](references/conditional-control-rules.md) when a baseline or vector description identifies
-a material state, capacity, recovery, request, dependency, identity, compatibility,
-configuration, tenant-isolation, or data-protection path.
+Use examination, interviews when available, and existing test or exercise records. Checks
+that introduce traffic, faults, or state changes require the system owner's authorization.
+Record where the search started and stopped, what was inspected, and access limits.
+The Skill grants no permission to contact people or operate production systems.
 
-The output is an expected control profile for each component-or-boundary and source pair. The
-phase ends when every applicable source has a tailored control set and every omission has a
-reason. The agent reads definitions for the selected IDs in
-[the mitigation catalog](references/mitigation-catalog.md).
+## Observations and evidence have different meanings.
 
-### Phase 3 prepares assessment rows.
+A mechanism is the configured implementation or operating procedure found in the system.
+Record its owner, configuration, coverage, limits, and dependencies. Map it to one or more
+mitigation definitions; that mapping is classification rather than proof of effectiveness.
+A shared mechanism can inform several change investigations within its boundary.
 
-The agent expands each expected control profile into one row per component or boundary, source,
-change vector when known, and atomic mitigation. It selects one or more assessment methods for
-each row—examine, interview, or test—using [the assessment method](references/assessment-method.md).
+An observation states what was found. Evidence records its code or document URI, revision,
+line or section locator, inspected excerpt or result, method, scope, and capture time.
+Link observations to evidence with a supports, challenges, or context relation and a reason.
+Then link criterion claims to observations with a separate relation and explanation.
+Preserve contrary evidence. A search for a missing control can be an observation without
+an invented mechanism.
 
-The output is a work list with evidence locations or evidence requests. The phase ends when each
-row has a clear determination to make and a bounded evidence search.
+Read [the assessment method](references/assessment-method.md) for status meanings and evidence
+limits. For each criterion, distinguish existence, activation, coverage, exercise, limits,
+and adverse effects according to its definition. A limiter implementation can establish
+existence while leaving route coverage unknown. A runbook establishes documentation; a matching
+exercise record is needed to establish exercised response behavior.
 
-### Phase 4 gathers evidence.
+## Conclusions retain uncertainty and their scope.
 
-The agent examines source, configuration, artifacts, dashboards, records, and runbooks; it
-interviews knowledgeable people when access permits; and it uses test evidence only when the
-test is safe and authorized. It records direct evidence pointers and the scope that each item
-covers. Recent incidents, reversals, and exercises can demonstrate response controls when they
-match the assessed path.
+Complete each finding and criterion claim as present, partial, absent, unknown, or not-applicable.
+A present conclusion must match the coverage and condition it claims. Absence needs a bounded
+search. Unknown needs the missing evidence or access limit. A control can exist while a coverage
+or exercise criterion remains partial or unknown. Maturity descriptions guide interpretation;
+they are not a universal numeric score.
 
-The phase ends when each row has sufficient evidence for a status or a recorded evidence limit.
-The agent does not infer absence from a lack of access.
+Validate the run with `validate --complete` before declaring the investigation complete.
+The validator checks references and expected work; it cannot judge semantic support.
+Report the boundary, expected and observed protections by change, outcome coverage, gaps,
+uncertainty, evidence, and the next targeted action. Do not claim an outcome is protected merely
+because candidate controls are numerous. Keep product gaps separate from opportunities that
+require comparing practices across teams.
 
-### Phase 5 makes control judgments.
+## Review verifies evidence and inference for every change.
 
-The agent records present, partial, absent, unknown, or not-applicable according to [the
-assessment method](references/assessment-method.md). An absence needs a stated inspection
-boundary. A documented control is not demonstrated through exercise unless evidence shows that
-it ran or was observed in use.
+Use the helper's `review` command on the completed investigation. The separate review has
+pending targets for every change, every observation/evidence link, every claim/observation
+link, and every criterion claim. Reused evidence links have one target and remain attributable
+to every change that uses them. The review includes exclusions, unresolved applicability,
+contrary evidence, and unknown conclusions.
 
-The output is the observed control profile: the expected rows plus their statuses, evidence,
-scope, and outcome coverage. The phase ends when all selected rows have a status and the
-remaining uncertainty is explicit.
+Open each cited source and verify its content, locator, revision when available, and scope
+against the observation's stated relation. Then check whether the observation supports the
+criterion conclusion, including conditions, coverage, dependencies, limits, and contradictions.
+Finally record a verdict on the whole claim and the change's tailoring. These are separate
+checks. Source code that defines a limiter can pass evidence review while a claim that every
+request is throttled fails inference review.
 
-### Phase 6 reports and improves the system.
-
-The agent reports the support boundary, expected and observed control profiles, maturity by
-source and user outcome, strengths, gaps, uncertainty, and the next control or investigation
-that would reduce a stated gap. It may describe a source as unprotected, partially protected,
-protected, or demonstrated through exercise when the rows support that conclusion.
-
-The skill does not calculate a universal maturity total. A numeric score needs calibration from
-several completed assessments before it can have a stable meaning.
-
-## The work can be partitioned without changing the method.
-
-When delegation is available and appropriate, one work item covers a defined component or
-interface boundary, one source profile, and a small related set of mitigation rows. The work item
-returns evidence-backed row candidates; it does not make the system-wide conclusion. The
-coordinating agent reconciles shared controls and overlapping boundaries before reporting.
-
-The skill does not require delegation. A single agent can complete the same rows in sequence
-when the system is small or when evidence access should remain narrow.
+Each target ends supported, unsupported, partially-supported, or unable-to-verify, with an
+explanation. Review completion means every target was addressed; it does not mean every
+conclusion passed. Use `validate-review --complete` and report unresolved support explicitly.
+Keep the assessed result fixed during review. A corrected result has a successor run that
+references the prior run and receives its own review.

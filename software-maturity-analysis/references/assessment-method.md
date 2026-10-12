@@ -1,91 +1,48 @@
-# The assessment method turns expected controls into an observed control profile.
+# The assessment method compares expected and observed protection.
 
-An expected control profile is the tailored set of controls that a component, source, and change
-path should have. An observed control profile records the evidence and status for those controls.
-The method evaluates controls; it does not invent failure modes or assign risk-priority scores.
+The expected profile contains controls tailored to a boundary and change. The observed profile
+contains criterion conclusions, observations, and evidence for those controls. Candidate counts
+are not a maturity score. Each conclusion has the scope it establishes and the limits it retains.
 
-## The agent inventories vectors before it selects controls.
-
-For every source that reaches a boundary, the agent records every child vector from the source
-profile as selected, excluded, or awaiting discovery. An exclusion states why the vector cannot
-reach the boundary. An awaiting-discovery vector states the missing fact that would classify it.
-
-| Boundary | Source | Vector | Disposition | Basis or missing fact |
-| --- | --- | --- | --- | --- |
-| `example-api` | S7 | S7.2 | Awaiting discovery | The available description does not identify whether any operation has a costly query path. |
-
-The expected control profile contains rows only for selected vectors. The inventory prevents an
-agent from treating an omitted vector as an evaluated vector.
-
-## Each assessment row has a bounded determination.
-
-Each row contains the component or interface boundary, source ID, child change-vector ID when
-known, mitigation ID, tailoring reason, control owner, user outcomes covered, status, assessment
-method, objects examined, evidence pointer, evidence date when known, scope covered, and notes.
-The control owner is the assessed team, an external provider, or shared. The evidence pointer can
-name a repository path and line, a configuration path, a dashboard, a deployment record, a
-runbook, an interview record, or a direct observation.
-
-The expected-profile work list has this reusable shape:
-
-| Boundary | Source and vector | Mitigation | Control owner | Selection reason | Assessment method | Evidence to seek |
-| --- | --- | --- | --- | --- | --- | --- |
-| `example-api` | S7.2 | A04 | Assessed team | The operation has a costly query path. | Examine, test | Boundary code, limit configuration, and a safe test result. |
-
-The observed-profile row adds status, evidence pointer, evidence date, scope covered, and notes
-to the same work-list row. The agent keeps a removed or added control in the expected profile
-with its tailoring reason rather than silently changing the profile.
-
-The row is the smallest work unit that can become a delegated task. A delegated task receives
-its boundary, source, mitigation IDs, expected evidence locations, and a stopping point; it
-returns row candidates without changing the system-wide conclusion.
-
-## The agent uses three evidence-gathering methods.
-
-| Method | The agent uses the method for this purpose. |
-| --- | --- |
-| Examine | The agent reads a code path, declaration, policy, dashboard, deployment record, runbook, incident record, or other durable object. |
-| Interview | The agent asks an owner or operator how the control operates, where its evidence is, and what scope it covers. Interview evidence does not replace an obtainable durable object. |
-| Test | The agent observes an existing test or exercise, or performs a safe and authorized check of the control. The agent does not introduce production traffic, faults, or state changes without authorization. |
-
-The assessment method records the objects inspected and the coverage depth. A control can need
-more than one method. For example, an examined runbook establishes that a response procedure is
-documented, while an observed exercise establishes that the procedure was used successfully.
-
-## The agent uses consistent control statuses.
+## The status has a meaning within the stated criterion.
 
 | Status | The status applies when this statement is true. |
 | --- | --- |
-| Present | The control exists, is active for the assessed scope, and evidence supports the stated determination. |
-| Partial | The control exists but does not cover all relevant components, outcomes, workloads, change paths, or fault domains. |
-| Absent | The stated inspection scope was searched and the expected control was not found. |
-| Unknown | The available access or evidence cannot establish whether the control exists or covers the need. |
-| Not applicable | The source, change vector, or mitigation does not apply to this scope, and the row states why. |
+| Present | The evidence supports the criterion throughout the claimed scope and condition. |
+| Partial | The evidence supports part of the criterion or scope, and the uncovered part is stated. |
+| Absent | A bounded inspection did not find the expected protection or criterion behavior. |
+| Unknown | Access, evidence, or a missing boundary fact prevents a determination, and the limit is stated. |
+| Not applicable | The criterion or control does not apply to this boundary and change, and the reason is stated. |
 
-The agent does not infer absence from a lack of access. The agent does not treat a documented
-control as exercised merely because it exists.
+A pending record has not been investigated. Unknown is a completed determination about an
+evidence limit. A criterion about existence can be present while coverage is partial and
+exercise is unknown. The finding describes the control's protection as a whole and must not
+claim coverage beyond its supporting criteria.
 
-## The report compares the two control profiles.
+## The evidence method has a stated inspection scope.
 
-The report includes these sections:
+Examination reads implementation paths, configuration, artifacts, dashboards, deployment
+records, runbooks, incidents, and other records. Interviews can explain ownership and locate
+evidence when access permits. Test evidence includes an existing execution or exercise, or a
+check authorized by the system owner. Interview statements do not replace obtainable records.
 
-1. The report defines the support boundary, customer-facing unit, owners, exclusions, evidence limits, and user outcomes in scope.
-2. The report identifies applicable sources of change, child vectors, and the expected control profiles selected for each component or interface.
-3. The report presents the observed rows grouped by source profile and mitigation family.
-4. The report summarizes present, partial, absent, unknown, and not-applicable controls for each source and outcome.
-5. The report identifies outcome coverage that depends on partial, absent, or unknown controls.
-6. The report names the next controls and investigations, including the source, outcome, and evidence that motivated each item.
-7. The report records relevant incidents, exercises, assumptions, and optional change-frequency information.
+Record the evidence source and locator, revision when available, inspected excerpt or result,
+method, capture time, and scope. A documentation statement does not establish execution.
+A configuration entry does not establish that every path uses it. A shared implementation
+can protect several paths, but common dependencies can defeat those protections together.
 
-The report may characterize a source as unprotected, partially protected, protected, or
-demonstrated through exercise. It does not calculate a universal maturity total in this version.
+Absence requires a search boundary and the objects examined. Lack of access supports unknown
+rather than absent. Provider-owned guarantees need supplied contract, architecture, or exercise
+evidence; a client call does not establish the provider's backup, durability, or recovery control.
 
-## The agent keeps work units narrow and composable.
+## Review checks the claimed support relation.
 
-A work unit covers one source within one named component or interface boundary, plus a small
-related set of mitigation IDs. It has supplied scope, evidence locations, rows to return, and a
-stopping point after those rows are complete.
+The source review checks the evidence against the observation. The inference review checks the
+observation against the criterion conclusion, including conditions, scope, and contrary evidence.
+The claim review has a verdict on the complete conclusion. Exclusions and tailoring reasons
+receive review as well. The [record format](record-format.md) defines the target collections.
 
-The coordinating agent assigns overlapping boundaries only when the distinction is clear. For
-example, an external dependency can be assessed separately for each caller, while a shared
-deployment control can be assessed once and then referenced by several components.
+Supported means the stated relationship or conclusion is justified within its scope.
+Partially-supported means some of it is justified and the remainder is stated. Unsupported
+means the cited content does not justify it. Unable-to-verify means the reviewer cannot establish
+support with available access. An unsupported verdict can finish a review target.

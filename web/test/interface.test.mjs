@@ -8,6 +8,7 @@ import { JSDOM } from 'jsdom';
 import * as model from '../public/catalog.js';
 import { createCatalogServer } from '../server.mjs';
 
+const uiSource = await readFile(new URL('../public/catalog-ui.js', import.meta.url), 'utf8');
 const [html, app, seedText] = await Promise.all([
   readFile(new URL('../public/index.html', import.meta.url), 'utf8'),
   readFile(new URL('../public/app.js', import.meta.url), 'utf8'),
@@ -30,8 +31,12 @@ async function setup(t) {
   const dom = new JSDOM(html, { url, runScripts: 'outside-only' });
   const { window } = dom;
   window.testModule = model;
+  window.eval(uiSource.replace(/^import .*;\n/, 'const { ancestry, effectiveControls, effectiveLinks } = window.testModule;\n').replace('export function createDefinitionUI', 'window.createDefinitionUI = function createDefinitionUI'));
+  window.testModule = { ...model, createDefinitionUI: window.createDefinitionUI };
   window.structuredClone = structuredClone;
   window.fetch = (path, options) => fetch(new URL(path, url), options);
+  window.scrollTo = () => {};
+  window.requestAnimationFrame = callback => callback();
   window.CSS = { escape: value => value };
   window.HTMLElement.prototype.scrollIntoView = () => {};
   window.HTMLDialogElement.prototype.showModal = function () { this.open = true; };
@@ -40,7 +45,7 @@ async function setup(t) {
   window.addEventListener('error', event => { errors.push(event.error); });
   // jsdom does not load ES modules. The test injects the real model exports and executes
   // the unchanged application body inside its own DOM, against the real temporary API.
-  const source = app.replace(/^import .*;\n/, 'const { LEVELS, validateCatalog, children, descendants, changeCatalog } = window.testModule;\n');
+  const source = app.replace(/^import .*;\n/, 'const { LEVELS, validateCatalog, children, descendants, changeCatalog, createDefinitionUI } = window.testModule;\n');
   await window.eval(`(async () => {${source}\n})()`);
   t.after(async () => {
     dom.window.close(); server.closeAllConnections();
@@ -53,7 +58,7 @@ async function setup(t) {
   const click = selector => { const element = $(selector); assert.ok(element, selector); element.click(); };
   const saved = () => eventually(() => $('#save-status').textContent === 'All changes are saved.');
   const submit = () => $('#modal-form').dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
-  const disk = async () => JSON.parse(await readFile(dataFile, 'utf8'));
+  const disk = async () => server.catalogStore.load();
   return { window, $, all, click, saved, submit, disk };
 }
 
@@ -200,4 +205,34 @@ test('a rejected save leaves the editor text available for correction', async t 
   assert.equal($('[data-id="S1"] input').value, 'An unsaved revision');
   assert.equal((await disk()).nodes.find(node => node.id === 'S1').title, 'Owned software');
   assert.match($('#toast').textContent, /changed in another tab/);
+});
+
+test('mitigation editing, criteria, search, membership, and undo share the SQLite catalog', async t => {
+  const {window,$,click,submit,saved,disk}=await setup(t);
+  click('[data-phase="1"]');click('[data-control="T01"]');
+  $('.control-definition [data-property="purpose"]').dispatchEvent(new window.MouseEvent('dblclick',{bubbles:true}));
+  $('#modal [name="value"]').value='This control exercises owned behavior.';submit();await saved();assert.equal((await disk()).mitigations.find(row=>row.id==='T01').purpose,'This control exercises owned behavior.');
+  click('[data-add-criterion="T01"]');$('#modal [name="kind"]').value='limits';$('#modal [name="statement"]').value='This criterion has a bounded test scope.';submit();await saved();assert.ok((await disk()).criteria.some(row=>row.statement==='This criterion has a bounded test scope.'));
+  click('[data-mitigation-menu="T01"]');click('[data-move-mitigation="T01"]');$('#modal [name="parent"]').value='family-R';submit();await saved();assert.equal((await disk()).mitigations.find(row=>row.id==='T01').parentId,'family-R');
+  click('#undo');await saved();assert.equal((await disk()).mitigations.find(row=>row.id==='T01').parentId,'family-T');
+  $('#search').value='bounded test scope';$('#search').dispatchEvent(new window.Event('input',{bubbles:true}));assert.ok($('#search-results [data-result="T01"]'));click('#search-results [data-result="T01"]');assert.equal($('#definition-view').hidden,false);
+});
+test('all three connection views resolve the same edited link and expose both hierarchies', async t => {
+  const {$,click,submit,saved,disk}=await setup(t);
+  click('[data-id="S1.1.1"] [data-action="select"]');click('[data-link-change="S1.1.1"]');
+  $('#modal [name="mitigationId"]').value='H11';$('#modal [name="reason"]').value='This change needs workload fairness.';$('#modal [name="condition"]').value='Workloads share capacity.';submit();await saved();
+  assert.ok((await disk()).applicability.some(row=>row.changeId==='S1.1.1'&&row.mitigationId==='H11'));
+  click('[data-view="matrix"]');click('[data-expand-id="S1"]');click('[data-expand-id="S1.1"]');click('[data-expand-id="family-H"]');
+  assert.ok($('.matrix-cell[data-cell-change="S1.1.1"][data-cell-mitigation="H11"]').getAttribute('aria-label').includes('1 conditional'));
+  click('[data-view="outlines"]');assert.ok($('.paired-outlines [data-outline-id="S1.1.1"]'));assert.ok($('.paired-outlines [data-outline-id="H11"]'));
+  click('[data-view="list"]');const link=(await disk()).applicability.find(row=>row.changeId==='S1.1.1'&&row.mitigationId==='H11');click(`[data-edit-link="${link.id}"]`);$('#modal [name="reason"]').value='The edited link still describes fairness.';submit();await saved();assert.ok($('#workspace').textContent.includes('The edited link still describes fairness.'));
+});
+
+test('a mitigation drag inside the connection column reaches the link editor without a hierarchy drag cancellation', async t => {
+  const {window,$,click}=await setup(t);click('[data-id="S1.1"] [data-action="select"]');
+  const dataTransfer={setData(){},effectAllowed:''};
+  const start=new window.Event('dragstart',{bubbles:true,cancelable:true});Object.defineProperty(start,'dataTransfer',{value:dataTransfer});
+  $('#workspace .connection-card [data-link-drag="T01"]').dispatchEvent(start);assert.equal(start.defaultPrevented,false);
+  const drop=new window.Event('drop',{bubbles:true,cancelable:true});Object.defineProperty(drop,'dataTransfer',{value:dataTransfer});
+  $('[data-id="S1.1.2"]').dispatchEvent(drop);assert.equal($('#modal').open,true);assert.equal($('#modal [name="mitigationId"]').value,'T01');assert.equal($('#modal [name="changeId"]').value,'S1.1.2');
 });

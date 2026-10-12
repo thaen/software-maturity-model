@@ -5,30 +5,35 @@ systems. A finding refers to a built-in definition and its assessment criteria. 
 refer to observations, and each observation refers to the evidence that establishes it.
 A review checks both the evidence and the inference from the observation to the claim.
 
-This proposal was revised on 2026-10-12 for review. SQLite is the proposed operational store.
-The current application still saves `web/data/catalog.json`; the migration has not been
-implemented. The [implementation plan](IMPLEMENTATION-PLAN.md) has the delivery sequence.
-Built-in definitions are editable through the UI and are captured for each assessment run.
+The catalog editor uses SQLite for authored definitions. Investigation and review records have
+a JSON contract and validation helpers. Their SQLite persistence and result interface follow
+the same relationships when implemented. The [README](README.md) has ERDs with record fields,
+including change level, parent, order, title, description, guidance, and origin.
+
+The diagrams use these labels: `S_` identifies “things that are part of the Skill,” `R_`
+identifies “things that are discovered at runtime,” and `O_` identifies “other.” The authored
+records are populated through the catalog, while the Skill instructs the agent to produce the
+runtime records. Scope, expected work, snapshots, and reviews belong to the other group.
 
 ## The storage boundary separates the public catalog from work data.
 
 The catalog authoring database contains generic definitions, criteria, applicability, and
-relations. A separate SQLite workspace database in a work repository contains systems,
-investigations, observations, evidence, reviews, and opportunities. An assessment imports
-its catalog snapshot into that workspace database so its foreign keys have local targets.
+relations. The workspace SQLite contract contains systems,
+investigations, observations, evidence, reviews, and opportunities. Workspace persistence imports
+its catalog snapshot into that database so its foreign keys have local targets.
 Foreign keys do not cross SQLite schema boundaries.
 [SQLite documents this limit](https://www.sqlite.org/foreignkeys.html).
 
 JSON remains an import and deterministic export format for Git review and catalog transfer.
-It is not the live persistence layer after migration. Startup does not overwrite the database
+SQLite is the live catalog persistence layer. Startup does not overwrite the database
 from a seed export. Catalog edits, reparenting, and changes to related records have database
 transactions and revision checks. Every database connection enables foreign-key enforcement.
 [SQLite describes foreign-key enforcement](https://www.sqlite.org/foreignkeys.html) and
 [transaction behavior](https://www.sqlite.org/transactional.html).
 
-The diagrams describe the final logical model. A crow's foot means several rows; a circle
+The diagrams describe the catalog and the investigation, organization, and opportunity contracts. A crow's foot means several rows; a circle
 means that the relationship is optional. Tables with two parents are explicit join tables.
-Catalog records use the composite identity `(catalog_snapshot_id, id)`, and all references
+Captured workspace catalog records use the composite identity `(catalog_snapshot_id, id)`, and all references
 to them include the snapshot. The authoring database has a working catalog; a workspace has
 captured catalogs for its runs. This preserves stable definition IDs without invalidation rules.
 
@@ -36,23 +41,123 @@ captured catalogs for its runs. This preserves stable definition IDs without inv
 
 ```mermaid
 erDiagram
-    CATALOG_SNAPSHOT ||--o{ CHANGE_DEFINITION : contains
-    CATALOG_SNAPSHOT ||--o{ MITIGATION_DEFINITION : contains
-    CHANGE_DEFINITION o|--o{ CHANGE_DEFINITION : parents
-    MITIGATION_DEFINITION o|--o{ MITIGATION_DEFINITION : groups
-    CHANGE_DEFINITION ||--o{ APPLICABILITY : has
-    MITIGATION_DEFINITION ||--o{ APPLICABILITY : selects
-    MITIGATION_DEFINITION ||--o{ MITIGATION_CRITERION : defines
-    MITIGATION_DEFINITION ||--o{ MITIGATION_RELATION : is_source
-    MITIGATION_DEFINITION ||--o{ MITIGATION_RELATION : is_target
-    CONDITIONAL_RULE ||--o{ RULE_MITIGATION : proposes
-    MITIGATION_DEFINITION ||--o{ RULE_MITIGATION : is_proposed
-    APPLICABILITY ||--o{ APPLICABILITY_OUTCOME : protects
-    OUTCOME_DEFINITION ||--o{ APPLICABILITY_OUTCOME : is_protected
-    CAPABILITY_DEFINITION ||--o{ CAPABILITY_CRITERION : defines
-    CATALOG_SNAPSHOT ||--o{ CONDITIONAL_RULE : contains
-    CATALOG_SNAPSHOT ||--o{ OUTCOME_DEFINITION : contains
-    CATALOG_SNAPSHOT ||--o{ CAPABILITY_DEFINITION : contains
+    O_CATALOG_SNAPSHOT {
+        string id PK
+        int revision
+        datetime captured_at
+    }
+    S_CHANGE_DEFINITION {
+        string id PK
+        string catalog_snapshot_id PK,FK
+        string parent_id FK
+        enum level "category, subcategory, kind"
+        int position
+        string title
+        text description
+        text guidance
+        enum origin
+    }
+    S_MITIGATION_DEFINITION {
+        string id PK
+        string catalog_snapshot_id PK,FK
+        string parent_id FK
+        enum kind "group, control"
+        int position
+        string title
+        text description
+        text purpose
+        text mechanism
+        text scope
+        text evidence
+        text maturity
+        text limits
+        text adverse_effects
+        enum origin
+    }
+    S_CONDITIONAL_RULE {
+        string catalog_snapshot_id PK,FK
+        string id PK
+        string title
+        text condition
+        text description
+    }
+    S_APPLICABILITY {
+        string catalog_snapshot_id PK,FK
+        string id PK
+        string change_id FK
+        string mitigation_id FK
+        string inherited_from FK
+        enum effect
+        boolean inherit
+        text reason
+        text condition
+        text mechanism
+    }
+    S_OUTCOME_DEFINITION {
+        string catalog_snapshot_id PK,FK
+        string id PK
+        string title
+        text description
+    }
+    S_CAPABILITY_DEFINITION {
+        string catalog_snapshot_id PK,FK
+        string id PK
+        string title
+        text description
+        text maturity
+    }
+    S_MITIGATION_CRITERION {
+        string id PK
+        string mitigation_id FK
+        string catalog_snapshot_id PK,FK
+        enum kind
+        text statement
+        text evidence
+    }
+    S_MITIGATION_RELATION {
+        string catalog_snapshot_id PK,FK
+        string id PK
+        string source_id FK
+        string target_id FK
+        enum kind
+        text scope
+        text reason
+    }
+    S_RULE_MITIGATION {
+        string catalog_snapshot_id PK,FK
+        string id PK
+        string rule_id FK
+        string mitigation_id FK
+    }
+    S_APPLICABILITY_OUTCOME {
+        string catalog_snapshot_id PK,FK
+        string applicability_id PK,FK
+        string outcome_id PK,FK
+    }
+    S_CAPABILITY_CRITERION {
+        string catalog_snapshot_id PK,FK
+        string id PK
+        string capability_id FK
+        text statement
+        text evidence
+    }
+    O_CATALOG_SNAPSHOT ||--o{ S_CHANGE_DEFINITION : contains
+    O_CATALOG_SNAPSHOT ||--o{ S_MITIGATION_DEFINITION : contains
+    S_CHANGE_DEFINITION o|--o{ S_CHANGE_DEFINITION : parents
+    S_MITIGATION_DEFINITION o|--o{ S_MITIGATION_DEFINITION : groups
+    S_CHANGE_DEFINITION ||--o{ S_APPLICABILITY : has
+    S_MITIGATION_DEFINITION ||--o{ S_APPLICABILITY : selects
+    S_MITIGATION_DEFINITION ||--o{ S_MITIGATION_CRITERION : defines
+    S_MITIGATION_DEFINITION ||--o{ S_MITIGATION_RELATION : is_source
+    S_MITIGATION_DEFINITION ||--o{ S_MITIGATION_RELATION : is_target
+    S_CONDITIONAL_RULE ||--o{ S_RULE_MITIGATION : proposes
+    S_MITIGATION_DEFINITION ||--o{ S_RULE_MITIGATION : is_proposed
+    S_APPLICABILITY ||--o{ S_APPLICABILITY_OUTCOME : protects
+    S_OUTCOME_DEFINITION ||--o{ S_APPLICABILITY_OUTCOME : is_protected
+    S_CAPABILITY_DEFINITION ||--o{ S_CAPABILITY_CRITERION : defines
+    O_CATALOG_SNAPSHOT ||--o{ S_CONDITIONAL_RULE : contains
+    O_CATALOG_SNAPSHOT ||--o{ S_OUTCOME_DEFINITION : contains
+    O_CATALOG_SNAPSHOT ||--o{ S_CAPABILITY_DEFINITION : contains
 ```
 
 A change definition has its hierarchy level, parent, order, title, description, and guidance.
@@ -70,25 +175,135 @@ a system has a protection.
 
 ```mermaid
 erDiagram
-    ORGANIZATION ||--o{ TEAM : has
-    TEAM o|--o{ SYSTEM : owns
-    SYSTEM ||--o{ BOUNDARY : has
-    BOUNDARY o|--o{ BOUNDARY : contains
-    SYSTEM ||--o{ SYSTEM_OUTCOME : has
-    OUTCOME_DEFINITION ||--o{ SYSTEM_OUTCOME : defines
-    ORGANIZATION ||--o{ APPROVED_IMPLEMENTATION : maintains
-    APPROVED_IMPLEMENTATION ||--o{ IMPLEMENTATION_MITIGATION : implements
-    MITIGATION_DEFINITION ||--o{ IMPLEMENTATION_MITIGATION : is_implemented
-    SYSTEM o|--o{ ASSESSMENT_RUN : is_assessed
-    TEAM o|--o{ ASSESSMENT_RUN : is_assessed
-    CATALOG_SNAPSHOT ||--o{ ASSESSMENT_RUN : supplies_definitions
-    ASSESSMENT_RUN ||--o{ MECHANISM : records
-    BOUNDARY ||--o{ MECHANISM : scopes
-    APPROVED_IMPLEMENTATION o|--o{ MECHANISM : supplies
-    MECHANISM ||--o{ MECHANISM_MITIGATION : maps_to
-    MITIGATION_DEFINITION ||--o{ MECHANISM_MITIGATION : classifies
-    MECHANISM ||--o{ MECHANISM_RELATION : is_source
-    MECHANISM ||--o{ MECHANISM_RELATION : is_target
+    O_ORGANIZATION {
+        string id PK
+        string name
+    }
+    O_TEAM {
+        string id PK
+        string organization_id FK
+        string name
+    }
+    O_SYSTEM {
+        string id PK
+        string team_id FK
+        string title
+        text description
+        string owner
+    }
+    O_BOUNDARY {
+        string id PK
+        string system_id FK
+        string parent_id FK
+        text description
+        text exclusions
+        string owner
+    }
+    S_OUTCOME_DEFINITION {
+        string catalog_snapshot_id PK,FK
+        string id PK
+        string title
+        text description
+    }
+    O_APPROVED_IMPLEMENTATION {
+        string id PK
+        string organization_id FK
+        string title
+        text description
+        string documentation_uri
+    }
+    S_MITIGATION_DEFINITION {
+        string id PK
+        string catalog_snapshot_id PK,FK
+        string parent_id FK
+        enum kind "group, control"
+        int position
+        string title
+        text description
+        text purpose
+        text mechanism
+        text scope
+        text evidence
+        text maturity
+        text limits
+        text adverse_effects
+        enum origin
+    }
+    O_CATALOG_SNAPSHOT {
+        string id PK
+        int revision
+        datetime captured_at
+    }
+    O_ASSESSMENT_RUN {
+        string id PK
+        string system_id FK
+        string team_id FK
+        string catalog_snapshot_id FK
+        string supersedes_run_id FK
+        enum state
+        string input_revision
+        datetime created_at
+        text limits
+    }
+    R_MECHANISM {
+        string id PK
+        string run_id FK
+        string boundary_id FK
+        string approved_implementation_id FK
+        text description
+        string owner
+        text configuration
+        text coverage
+        text limits
+    }
+    O_SYSTEM_OUTCOME {
+        string id PK
+        string system_id FK
+        string outcome_definition_id FK
+        text users
+        text target
+        text measurement_window
+        text exposure
+        text consequences
+    }
+    O_IMPLEMENTATION_MITIGATION {
+        string implementation_id PK,FK
+        string mitigation_id PK,FK
+        text scope
+    }
+    R_MECHANISM_MITIGATION {
+        string id PK
+        string mechanism_id FK
+        string mitigation_id FK
+        text reason
+    }
+    R_MECHANISM_RELATION {
+        string id PK
+        string source_id FK
+        string target_id FK
+        enum kind
+        text condition
+        text reason
+    }
+    O_ORGANIZATION ||--o{ O_TEAM : has
+    O_TEAM o|--o{ O_SYSTEM : owns
+    O_SYSTEM ||--o{ O_BOUNDARY : has
+    O_BOUNDARY o|--o{ O_BOUNDARY : contains
+    O_SYSTEM ||--o{ O_SYSTEM_OUTCOME : has
+    S_OUTCOME_DEFINITION ||--o{ O_SYSTEM_OUTCOME : defines
+    O_ORGANIZATION ||--o{ O_APPROVED_IMPLEMENTATION : maintains
+    O_APPROVED_IMPLEMENTATION ||--o{ O_IMPLEMENTATION_MITIGATION : implements
+    S_MITIGATION_DEFINITION ||--o{ O_IMPLEMENTATION_MITIGATION : is_implemented
+    O_SYSTEM o|--o{ O_ASSESSMENT_RUN : is_assessed
+    O_TEAM o|--o{ O_ASSESSMENT_RUN : is_assessed
+    O_CATALOG_SNAPSHOT ||--o{ O_ASSESSMENT_RUN : supplies_definitions
+    O_ASSESSMENT_RUN ||--o{ R_MECHANISM : records
+    O_BOUNDARY ||--o{ R_MECHANISM : scopes
+    O_APPROVED_IMPLEMENTATION o|--o{ R_MECHANISM : supplies
+    R_MECHANISM ||--o{ R_MECHANISM_MITIGATION : maps_to
+    S_MITIGATION_DEFINITION ||--o{ R_MECHANISM_MITIGATION : classifies
+    R_MECHANISM ||--o{ R_MECHANISM_RELATION : is_source
+    R_MECHANISM ||--o{ R_MECHANISM_RELATION : is_target
 ```
 
 A run has either a system or a team as its subject. Product investigations have system runs;
@@ -111,29 +326,222 @@ configuration described in that run. Later edits do not rewrite those observatio
 
 ```mermaid
 erDiagram
-    ASSESSMENT_RUN ||--o{ CHANGE_INVESTIGATION : inventories
-    BOUNDARY ||--o{ CHANGE_INVESTIGATION : scopes
-    CHANGE_DEFINITION ||--o{ CHANGE_INVESTIGATION : defines
-    CHANGE_INVESTIGATION ||--o{ INVESTIGATION_OBSERVATION : explains
-    OBSERVATION ||--o{ INVESTIGATION_OBSERVATION : informs
-    CHANGE_INVESTIGATION ||--o{ EXPECTED_CONTROL : expects
-    MITIGATION_DEFINITION ||--o{ EXPECTED_CONTROL : defines
-    EXPECTED_CONTROL ||--o{ CONTROL_SELECTION : explains
-    APPLICABILITY o|--o{ CONTROL_SELECTION : supplies
-    CONDITIONAL_RULE o|--o{ CONTROL_SELECTION : supplies
-    EXPECTED_CONTROL ||--o| CONTROL_FINDING : receives
-    EXPECTED_CONTROL ||--o{ CONTROL_OUTCOME : addresses
-    SYSTEM_OUTCOME ||--o{ CONTROL_OUTCOME : is_addressed
-    CONTROL_FINDING o|--o{ CLAIM : concludes
-    MITIGATION_CRITERION o|--o{ CLAIM : tests
-    CLAIM ||--o{ CLAIM_OBSERVATION : explains
-    OBSERVATION ||--o{ CLAIM_OBSERVATION : informs
-    ASSESSMENT_RUN ||--o{ OBSERVATION : records
-    BOUNDARY o|--o{ OBSERVATION : scopes
-    MECHANISM o|--o{ OBSERVATION : concerns
-    OBSERVATION ||--o{ OBSERVATION_EVIDENCE : cites
-    EVIDENCE ||--o{ OBSERVATION_EVIDENCE : grounds
-    ASSESSMENT_RUN ||--o{ EVIDENCE : captures
+    O_ASSESSMENT_RUN {
+        string id PK
+        string system_id FK
+        string team_id FK
+        string catalog_snapshot_id FK
+        string supersedes_run_id FK
+        enum state
+        string input_revision
+        datetime created_at
+        text limits
+    }
+    O_BOUNDARY {
+        string id PK
+        string system_id FK
+        string parent_id FK
+        text description
+        text exclusions
+        string owner
+    }
+    S_CHANGE_DEFINITION {
+        string id PK
+        string catalog_snapshot_id PK,FK
+        string parent_id FK
+        enum level "category, subcategory, kind"
+        int position
+        string title
+        text description
+        text guidance
+        enum origin
+    }
+    R_CHANGE_INVESTIGATION {
+        string id PK
+        string run_id FK
+        string boundary_id FK
+        string change_id FK
+        enum disposition
+        text reason
+        text search_scope
+    }
+    R_OBSERVATION {
+        string id PK
+        string run_id FK
+        string boundary_id FK
+        string mechanism_id FK
+        text statement
+    }
+    S_MITIGATION_DEFINITION {
+        string id PK
+        string catalog_snapshot_id PK,FK
+        string parent_id FK
+        enum kind "group, control"
+        int position
+        string title
+        text description
+        text purpose
+        text mechanism
+        text scope
+        text evidence
+        text maturity
+        text limits
+        text adverse_effects
+        enum origin
+    }
+    O_EXPECTED_CONTROL {
+        string id PK
+        string investigation_id FK
+        string mitigation_id FK
+        enum disposition
+        text reason
+    }
+    S_APPLICABILITY {
+        string catalog_snapshot_id PK,FK
+        string id PK
+        string change_id FK
+        string mitigation_id FK
+        string inherited_from FK
+        enum effect
+        boolean inherit
+        text reason
+        text condition
+        text mechanism
+    }
+    S_CONDITIONAL_RULE {
+        string catalog_snapshot_id PK,FK
+        string id PK
+        string title
+        text condition
+        text description
+    }
+    O_SYSTEM_OUTCOME {
+        string id PK
+        string system_id FK
+        string outcome_definition_id FK
+        text users
+        text target
+        text measurement_window
+        text exposure
+        text consequences
+    }
+    R_CONTROL_FINDING {
+        string id PK
+        string expected_control_id FK
+        enum state
+        enum status
+        text conclusion
+        text search_scope
+        text limits
+    }
+    S_MITIGATION_CRITERION {
+        string id PK
+        string mitigation_id FK
+        string catalog_snapshot_id PK,FK
+        enum kind
+        text statement
+        text evidence
+    }
+    R_CLAIM {
+        string id PK
+        string finding_id FK
+        string criterion_id FK
+        string capability_finding_id FK
+        string capability_criterion_id FK
+        enum state
+        enum status
+        text conclusion
+        text limits
+    }
+    R_MECHANISM {
+        string id PK
+        string run_id FK
+        string boundary_id FK
+        string approved_implementation_id FK
+        text description
+        string owner
+        text configuration
+        text coverage
+        text limits
+    }
+    R_EVIDENCE {
+        string id PK
+        string run_id FK
+        string uri
+        string revision
+        text locator
+        text result
+        enum method
+        text scope
+        datetime captured_at
+    }
+    R_INVESTIGATION_OBSERVATION {
+        string id PK
+        string investigation_id FK
+        string observation_id FK
+        text reason
+    }
+    O_CONTROL_SELECTION {
+        string id PK
+        string expected_control_id FK
+        string applicability_id FK
+        string rule_id FK
+        string relation_id FK
+        text manual_reason
+    }
+    O_CONTROL_OUTCOME {
+        string expected_control_id PK,FK
+        string system_outcome_id PK,FK
+        text reason
+    }
+    R_CLAIM_OBSERVATION {
+        string id PK
+        string claim_id FK
+        string observation_id FK
+        enum relation
+        text reason
+    }
+    R_OBSERVATION_EVIDENCE {
+        string id PK
+        string observation_id FK
+        string evidence_id FK
+        enum relation
+        text reason
+    }
+    O_ASSESSMENT_RUN ||--o{ R_CHANGE_INVESTIGATION : inventories
+    O_BOUNDARY ||--o{ R_CHANGE_INVESTIGATION : scopes
+    S_CHANGE_DEFINITION ||--o{ R_CHANGE_INVESTIGATION : defines
+    R_CONDITION_DETERMINATION {
+        string id PK
+        string investigation_id FK
+        string applicability_id FK
+        string rule_id FK
+        enum disposition
+        text reason
+    }
+    R_CHANGE_INVESTIGATION ||--o{ R_CONDITION_DETERMINATION : tailors
+    S_CONDITIONAL_RULE o|--o{ R_CONDITION_DETERMINATION : defines
+    S_APPLICABILITY o|--o{ R_CONDITION_DETERMINATION : defines
+    R_CHANGE_INVESTIGATION ||--o{ R_INVESTIGATION_OBSERVATION : explains
+    R_OBSERVATION ||--o{ R_INVESTIGATION_OBSERVATION : informs
+    R_CHANGE_INVESTIGATION ||--o{ O_EXPECTED_CONTROL : expects
+    S_MITIGATION_DEFINITION ||--o{ O_EXPECTED_CONTROL : defines
+    O_EXPECTED_CONTROL ||--o{ O_CONTROL_SELECTION : explains
+    S_APPLICABILITY o|--o{ O_CONTROL_SELECTION : supplies
+    S_CONDITIONAL_RULE o|--o{ O_CONTROL_SELECTION : supplies
+    O_EXPECTED_CONTROL ||--o| R_CONTROL_FINDING : receives
+    O_EXPECTED_CONTROL ||--o{ O_CONTROL_OUTCOME : addresses
+    O_SYSTEM_OUTCOME ||--o{ O_CONTROL_OUTCOME : is_addressed
+    R_CONTROL_FINDING o|--o{ R_CLAIM : concludes
+    S_MITIGATION_CRITERION o|--o{ R_CLAIM : tests
+    R_CLAIM ||--o{ R_CLAIM_OBSERVATION : explains
+    R_OBSERVATION ||--o{ R_CLAIM_OBSERVATION : informs
+    O_ASSESSMENT_RUN ||--o{ R_OBSERVATION : records
+    O_BOUNDARY o|--o{ R_OBSERVATION : scopes
+    R_MECHANISM o|--o{ R_OBSERVATION : concerns
+    R_OBSERVATION ||--o{ R_OBSERVATION_EVIDENCE : cites
+    R_EVIDENCE ||--o{ R_OBSERVATION_EVIDENCE : grounds
+    O_ASSESSMENT_RUN ||--o{ R_EVIDENCE : captures
 ```
 
 The investigation inventory has a row for every catalog change within each assessed boundary.
@@ -168,25 +576,110 @@ an explanation. Claim-observation links state how the observed fact supports or 
 criterion's conclusion. A source can support several observations, and an observation can inform
 several claims without having its text copied into each finding.
 
-The database requires the claim's criterion to belong to the finding's mitigation and snapshot.
+The runtime contract requires the claim's criterion to belong to the finding's mitigation and snapshot.
 It also requires an expected control, finding, claim, observation, and evidence link to remain
 within their stated run and permitted boundary. Team observations can have no product boundary.
-Composite foreign keys and checked transactions enforce these constraints.
+The JSON validator checks the product investigation references. Workspace SQLite persistence requires composite foreign keys and checked transactions for these constraints.
 
 ## Review checks the links and the conclusion as separate determinations.
 
 ```mermaid
 erDiagram
-    ASSESSMENT_RUN o|--o{ ASSESSMENT_RUN : is_corrected_by
-    ASSESSMENT_RUN ||--o{ REVIEW_RUN : receives
-    REVIEW_RUN ||--o{ REVIEW_CHANGE : targets
-    CHANGE_INVESTIGATION ||--o{ REVIEW_CHANGE : receives
-    REVIEW_RUN ||--o{ EVIDENCE_LINK_REVIEW : records
-    OBSERVATION_EVIDENCE ||--o{ EVIDENCE_LINK_REVIEW : receives
-    REVIEW_RUN ||--o{ INFERENCE_REVIEW : records
-    CLAIM_OBSERVATION ||--o{ INFERENCE_REVIEW : receives
-    REVIEW_RUN ||--o{ CLAIM_REVIEW : records
-    CLAIM ||--o{ CLAIM_REVIEW : receives
+    O_ASSESSMENT_RUN {
+        string id PK
+        string system_id FK
+        string team_id FK
+        string catalog_snapshot_id FK
+        string supersedes_run_id FK
+        enum state
+        string input_revision
+        datetime created_at
+        text limits
+    }
+    O_REVIEW_RUN {
+        string id PK
+        string assessment_id FK
+        string reviewer
+        string assessment_digest
+        enum state
+        datetime created_at
+    }
+    R_CHANGE_INVESTIGATION {
+        string id PK
+        string run_id FK
+        string boundary_id FK
+        string change_id FK
+        enum disposition
+        text reason
+        text search_scope
+    }
+    R_OBSERVATION_EVIDENCE {
+        string id PK
+        string observation_id FK
+        string evidence_id FK
+        enum relation
+        text reason
+    }
+    R_CLAIM_OBSERVATION {
+        string id PK
+        string claim_id FK
+        string observation_id FK
+        enum relation
+        text reason
+    }
+    R_CLAIM {
+        string id PK
+        string finding_id FK
+        string criterion_id FK
+        string capability_finding_id FK
+        string capability_criterion_id FK
+        enum state
+        enum status
+        text conclusion
+        text limits
+    }
+    O_REVIEW_CHANGE {
+        string id PK
+        string review_id FK
+        string investigation_id FK
+        enum state
+        enum verdict
+        text reason
+    }
+    O_EVIDENCE_LINK_REVIEW {
+        string id PK
+        string review_id FK
+        string observation_evidence_id FK
+        enum state
+        enum verdict
+        text reason
+    }
+    O_INFERENCE_REVIEW {
+        string id PK
+        string review_id FK
+        string claim_observation_id FK
+        enum state
+        enum verdict
+        text reason
+    }
+    O_CLAIM_REVIEW {
+        string id PK
+        string review_id FK
+        string claim_id FK
+        enum state
+        enum verdict
+        text reason
+    }
+    O_ASSESSMENT_RUN o|--o{ O_ASSESSMENT_RUN : is_corrected_by
+    O_ASSESSMENT_RUN ||--o{ O_REVIEW_RUN : receives
+    O_REVIEW_RUN ||--o{ O_REVIEW_CHANGE : targets
+    R_CHANGE_INVESTIGATION ||--o{ O_REVIEW_CHANGE : receives
+    O_REVIEW_RUN ||--o{ O_EVIDENCE_LINK_REVIEW : records
+    R_OBSERVATION_EVIDENCE ||--o{ O_EVIDENCE_LINK_REVIEW : receives
+    O_REVIEW_RUN ||--o{ O_INFERENCE_REVIEW : records
+    R_CLAIM_OBSERVATION ||--o{ O_INFERENCE_REVIEW : receives
+    O_REVIEW_RUN ||--o{ O_CLAIM_REVIEW : records
+    R_CLAIM ||--o{ O_CLAIM_REVIEW : receives
 ```
 
 A review run records its assessment and reviewer. Review-change rows capture the selected
@@ -222,21 +715,135 @@ can pass while the inference supporting full coverage fails.
 
 ```mermaid
 erDiagram
-    ASSESSMENT_RUN ||--o{ CAPABILITY_FINDING : records
-    TEAM ||--o{ CAPABILITY_FINDING : scopes
-    CAPABILITY_DEFINITION ||--o{ CAPABILITY_FINDING : defines
-    CAPABILITY_FINDING o|--o{ CLAIM : concludes
-    CAPABILITY_CRITERION o|--o{ CLAIM : tests
-    ORGANIZATION ||--o{ OPPORTUNITY : has
-    OPPORTUNITY ||--o{ OPPORTUNITY_FINDING : cites
-    CONTROL_FINDING o|--o{ OPPORTUNITY_FINDING : motivates
-    CAPABILITY_FINDING o|--o{ OPPORTUNITY_FINDING : motivates
-    OPPORTUNITY ||--o{ OPPORTUNITY_SYSTEM : affects
-    SYSTEM ||--o{ OPPORTUNITY_SYSTEM : is_affected
-    OPPORTUNITY ||--o{ OPPORTUNITY_OUTCOME : targets
-    SYSTEM_OUTCOME ||--o{ OPPORTUNITY_OUTCOME : is_targeted
-    OPPORTUNITY ||--o{ OPPORTUNITY_MEASUREMENT : measures
-    SYSTEM_OUTCOME o|--o{ OPPORTUNITY_MEASUREMENT : informs
+    O_ASSESSMENT_RUN {
+        string id PK
+        string system_id FK
+        string team_id FK
+        string catalog_snapshot_id FK
+        string supersedes_run_id FK
+        enum state
+        string input_revision
+        datetime created_at
+        text limits
+    }
+    O_TEAM {
+        string id PK
+        string organization_id FK
+        string name
+    }
+    S_CAPABILITY_DEFINITION {
+        string catalog_snapshot_id PK,FK
+        string id PK
+        string title
+        text description
+        text maturity
+    }
+    R_CAPABILITY_FINDING {
+        string id PK
+        string run_id FK
+        string team_id FK
+        string capability_id FK
+        enum status
+        text conclusion
+    }
+    S_CAPABILITY_CRITERION {
+        string catalog_snapshot_id PK,FK
+        string id PK
+        string capability_id FK
+        text statement
+        text evidence
+    }
+    O_ORGANIZATION {
+        string id PK
+        string name
+    }
+    O_OPPORTUNITY {
+        string id PK
+        string organization_id FK
+        text action
+        text expected_result
+        text priority_rationale
+        text uncertainty
+        text effort
+        text implementation_result
+    }
+    R_CONTROL_FINDING {
+        string id PK
+        string expected_control_id FK
+        enum state
+        enum status
+        text conclusion
+        text search_scope
+        text limits
+    }
+    O_SYSTEM {
+        string id PK
+        string team_id FK
+        string title
+        text description
+        string owner
+    }
+    O_SYSTEM_OUTCOME {
+        string id PK
+        string system_id FK
+        string outcome_definition_id FK
+        text users
+        text target
+        text measurement_window
+        text exposure
+        text consequences
+    }
+    R_CLAIM {
+        string id PK
+        string finding_id FK
+        string criterion_id FK
+        string capability_finding_id FK
+        string capability_criterion_id FK
+        enum state
+        enum status
+        text conclusion
+        text limits
+    }
+    O_OPPORTUNITY_FINDING {
+        string id PK
+        string opportunity_id FK
+        string control_finding_id FK
+        string capability_finding_id FK
+        text reason
+    }
+    O_OPPORTUNITY_SYSTEM {
+        string opportunity_id PK,FK
+        string system_id PK,FK
+    }
+    O_OPPORTUNITY_OUTCOME {
+        string opportunity_id PK,FK
+        string system_outcome_id PK,FK
+    }
+    O_OPPORTUNITY_MEASUREMENT {
+        string id PK
+        string opportunity_id FK
+        string system_outcome_id FK
+        text expected_value
+        text observed_value
+        string units
+        text window
+        string source_uri
+    }
+    O_ASSESSMENT_RUN ||--o{ R_CAPABILITY_FINDING : records
+    O_TEAM ||--o{ R_CAPABILITY_FINDING : scopes
+    S_CAPABILITY_DEFINITION ||--o{ R_CAPABILITY_FINDING : defines
+    R_CAPABILITY_FINDING o|--o{ R_CLAIM : concludes
+    S_CAPABILITY_CRITERION o|--o{ R_CLAIM : tests
+    O_ORGANIZATION ||--o{ O_OPPORTUNITY : has
+    O_OPPORTUNITY ||--o{ O_OPPORTUNITY_FINDING : cites
+    R_CONTROL_FINDING o|--o{ O_OPPORTUNITY_FINDING : motivates
+    R_CAPABILITY_FINDING o|--o{ O_OPPORTUNITY_FINDING : motivates
+    O_OPPORTUNITY ||--o{ O_OPPORTUNITY_SYSTEM : affects
+    O_SYSTEM ||--o{ O_OPPORTUNITY_SYSTEM : is_affected
+    O_OPPORTUNITY ||--o{ O_OPPORTUNITY_OUTCOME : targets
+    O_SYSTEM_OUTCOME ||--o{ O_OPPORTUNITY_OUTCOME : is_targeted
+    O_OPPORTUNITY ||--o{ O_OPPORTUNITY_MEASUREMENT : measures
+    O_SYSTEM_OUTCOME o|--o{ O_OPPORTUNITY_MEASUREMENT : informs
 ```
 
 A claim has either a control finding and mitigation criterion or a capability finding and

@@ -1,21 +1,22 @@
 import { createServer } from 'node:http';
-import { readFile, writeFile, rename, mkdir } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, extname, sep } from 'node:path';
-import { randomUUID } from 'node:crypto';
+import { CatalogStore } from './store.mjs';
 import { validateCatalog } from './public/catalog.js';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const publicRoot = resolve(root, 'public');
 const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
 
-export function createCatalogServer({ dataFile = resolve(root, 'data/catalog.json') } = {}) {
+export function createCatalogServer({ dataFile = resolve(root, 'data/catalog.json'), databaseFile = resolve(dirname(dataFile), 'catalog.sqlite') } = {}) {
+  const store = new CatalogStore({ databaseFile, dataFile });
   let writeQueue = Promise.resolve();
   function json(res, status, body) {
     res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
     res.end(JSON.stringify(body));
   }
-  async function load() { return validateCatalog(JSON.parse(await readFile(dataFile, 'utf8'))); }
+  async function load() { return store.load(); }
   const server = createServer(async (req, res) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Content-Security-Policy', "default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'");
@@ -36,13 +37,8 @@ export function createCatalogServer({ dataFile = resolve(root, 'data/catalog.jso
         let incoming;
         try { incoming = validateCatalog(JSON.parse(raw)); } catch (error) { return json(res, 400, { error: error.message }); }
         const write = writeQueue.then(async () => {
-          const current = await load();
-          if (incoming.revision !== current.revision) return json(res, 409, { error: 'The catalog changed in another tab or on disk. Reload before making more changes.' });
-          const saved = { schemaVersion: 1, revision: current.revision + 1, updatedAt: new Date().toISOString(), ...(incoming.description != null ? { description: incoming.description } : {}), nodes: incoming.nodes };
-          const temporary = `${dataFile}.${randomUUID()}.tmp`;
-          await mkdir(dirname(dataFile), { recursive: true });
-          await writeFile(temporary, `${JSON.stringify(saved, null, 2)}\n`, 'utf8');
-          await rename(temporary, dataFile);
+          let saved;
+          try { saved = store.replace(incoming); } catch (error) { if (error.status) return json(res, error.status, { error: error.message }); throw error; }
           return json(res, 200, saved);
         });
         writeQueue = write.catch(() => {});
@@ -64,6 +60,8 @@ export function createCatalogServer({ dataFile = resolve(root, 'data/catalog.jso
       else res.end();
     }
   });
+  server.on('close', () => store.close());
+  server.catalogStore = store;
   return server;
 }
 

@@ -1,0 +1,1 @@
+../../software-maturity-analysis/scripts/catalog.mjs

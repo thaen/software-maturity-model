@@ -5,9 +5,10 @@ of those protections in systems. The implementation starts with authoring and vi
 then adds the context and evidence needed for organization comparisons and opportunity analysis.
 Each increment has a usable output before the next increment begins.
 
-This proposal is ready for review as of 2026-10-12. It includes the model improvements from
-the research and all three views in the comparison. The current change catalog remains the
-starting point, and its category names are expected to change through the editor.
+The catalog editor has both hierarchies, relationship authoring, SQLite persistence, and
+three connection views. The investigation Skill has preparation and review helpers.
+Result visualization, workspace SQLite persistence, organization comparisons, and opportunity
+interfaces follow these catalog and workflow contracts.
 
 ## The scope follows the decisions already made.
 
@@ -88,13 +89,14 @@ Every resulting assessment row retains the reason for selecting its mitigation.
 ### The storage model uses SQLite and preserves the editing guarantees.
 
 The first increment migrates `web/data/catalog.json` into SQLite while preserving definitions,
-IDs, order, origins, and guidance. The current runtime still uses JSON until that increment is
-implemented. Migration is explicit and idempotent, preserves the original export, and never
+IDs, order, origins, and guidance. SQLite is the live catalog store. Startup migration is
+idempotent, preserves the original export, and never
 reloads seed definitions over later UI edits. JSON remains an import and deterministic export
 format for Git review and catalog transfer.
 
-The public catalog database contains generic authoring data. A configured SQLite workspace in
-a work repository holds organization records and imports the catalog snapshot used by each run.
+The public catalog database contains generic authoring data. Investigation and review helpers
+produce JSON records in the work repository. A later SQLite workspace will hold organization
+records and import the catalog snapshot used by each run.
 All assessment references therefore have foreign-key targets in the same database. Foreign-key
 enforcement is enabled on every connection, and transactions cover related mutations. Revision
 checks, import and export, and session undo and redo remain available.
@@ -343,34 +345,9 @@ The increment is complete when candidate generation has a reviewed example set c
 cases, candidate evidence is traceable, and an implemented opportunity can record its observed
 result. Research into ranking can continue without delaying the preceding increments.
 
-## The review can focus on three proposed choices.
+## The result interfaces retain the catalog and evidence meanings.
 
-The first choice is to make all three connection views available while retaining the optional
-fourth column as an editing surface. Storage is revised to SQLite, with a public catalog and
-organization workspace databases containing their own catalog snapshots. The second choice is
-to use the definition, claim, observation, and evidence path with a separate review pass. The
-third is to implement this evidence path and typed mitigation relations before organization-wide ranking.
-These choices affect the product and implementation scope; routine module names and layout
-details remain implementation decisions.
-
-## The precedents explain the proposed rules.
-
-[Bertifier](https://charlesperin.net/publications/bertifier),
-[TreeMatrix](https://profs.etsmtl.ca/mmcguffin/research/2012-rufiange-TreeMatrix/rufiange-cgf2012-TreeMatrix.pdf),
-and [Juniper](https://www.visdesignlab.net/publications/2018_infovis_juniper/) inform the
-hierarchy matrix and selection views.
-[Bowtie recovery controls](https://www.caa.co.uk/safety-initiatives/working-with-industry/bowtie/bowtie-elements/recovery-controls/)
-inform the distinction between a recovery chain and independent protections.
-[SAMM assessment criteria](https://owaspsamm.org/assessment/) inform determinations,
-while [STPA](https://psas.scripts.mit.edu/home/get_file.php?name=STPA_Handbook.pdf) informs
-interaction and timing limits.
-
-[Google's production-readiness work](https://sre.google/sre-book/evolving-sre-engagement-model/)
-informs shared implementations, and [SLO guidance](https://sre.google/workbook/implementing-slos/)
-informs outcome context. [CMMI](https://cmmiinstitute.com/learning/appraisals/levels) informs
-the separation of product findings and organization capability.
-[SACM](https://www.omg.org/spec/SACM/2.3/PDF) informs claim-specific evidence, and
-[DORA](https://dora.dev/guides/dora-metrics/) informs improvement measurements.
-
-The three catalog views describe expected relationships; an assessment supplies the evidence
-of protection in a system.
+The catalog has two authored trees and a connection column. Investigation records use captured
+definitions, expected work, observations, evidence, and criterion conclusions. The result UI
+will use those records without conflating catalog applicability with observed protection.
+The organization and opportunity interfaces will compare findings through the same evidence path.
