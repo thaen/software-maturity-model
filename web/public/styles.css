@@ -541,21 +541,42 @@ main {
   background:#b4cfaf24;
 }
 .item-description {
-  font-size:10px;
-  color:#879280;
+  font-size:11px;
+  color:#687761;
   line-height:1.6;
   margin-top:5px;
-  display:-webkit-box;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:2;
-  overflow:hidden;
+  white-space:pre-wrap;
 }
 .item.selected .item-description {
-  color:#6f8368;
-  -webkit-line-clamp:5;
+  color:#52694d;
 }
-.item[data-level="kind"] .item-description {
-  -webkit-line-clamp:unset;
+.item-guidance {
+  margin-top:10px;
+  padding-top:8px;
+  border-top:1px solid var(--line);
+}
+.item-guidance h4 {
+  margin:0;
+  font-size:9px;
+  font-weight:600;
+  color:#617657;
+}
+.catalog-scope {
+  margin-top:20px;
+  max-width:850px;
+  padding:16px;
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:6px;
+}
+.catalog-scope h2 {
+  font-size:12px;
+  margin-bottom:8px;
+}
+.catalog-scope p {
+  font-size:12px;
+  line-height:1.8;
+  white-space:pre-wrap;
 }
 .item.selected h3 {
   color:#235f45;
@@ -666,7 +687,6 @@ main {
 .editable.editing {
   display:block;
   overflow:visible;
-  -webkit-line-clamp:unset;
   cursor:default;
 }
 .item.dragging {

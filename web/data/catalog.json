@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "revision": 0,
-  "updatedAt": "2026-10-11T00:00:00.000Z",
+  "revision": 1,
+  "updatedAt": "2026-10-12T03:00:52.187559Z",
   "nodes": [
     {
       "id": "S1",
@@ -10,7 +10,7 @@
       "title": "Owned software",
       "description": "This profile applies to code and executable behavior that the assessed team builds or maintains. It includes a release whose behavior changes when code behind an existing control is enabled. It does not include a change to the control's value, which is S4, or a change to deployment assembly, which is S3.",
       "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "guidance": "The assessor removes controls that do not fit the changed code path and records the reason. For example, a pure formatting change may not need capacity testing, while a payment mutation needs the persistent-state and correctness controls in this profile."
     },
     {
       "id": "S1.1",
@@ -18,8 +18,7 @@
       "level": "subcategory",
       "title": "API and business behavior",
       "description": "Request, API, business-rule, or algorithm behavior changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "skill"
     },
     {
       "id": "S1.1.1",
@@ -27,8 +26,7 @@
       "level": "kind",
       "title": "Business-rule revision",
       "description": "A release changes a calculation, eligibility rule, or other decision visible to users.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.1.2",
@@ -36,8 +34,7 @@
       "level": "kind",
       "title": "API response revision",
       "description": "A release changes the fields, status codes, or ordering returned by an endpoint.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.2",
@@ -45,8 +42,7 @@
       "level": "subcategory",
       "title": "Jobs and workers",
       "description": "Background-job, worker, scheduler, or batch-processing code changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "skill"
     },
     {
       "id": "S1.2.1",
@@ -54,8 +50,7 @@
       "level": "kind",
       "title": "Schedule logic revision",
       "description": "A worker release changes when a job runs, how work is selected, or which tasks are skipped.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.2.2",
@@ -63,8 +58,7 @@
       "level": "kind",
       "title": "Batch-processing revision",
       "description": "A release changes batching, checkpointing, or how a partially completed job resumes.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.3",
@@ -72,8 +66,7 @@
       "level": "subcategory",
       "title": "Data and persistence code",
       "description": "Data-access, caching, serialization, or persistent-state handling code changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "skill"
     },
     {
       "id": "S1.3.1",
@@ -81,8 +74,7 @@
       "level": "kind",
       "title": "Serialization revision",
       "description": "A release changes the representation of stored or transmitted data.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.3.2",
@@ -90,8 +82,7 @@
       "level": "kind",
       "title": "Cache behavior revision",
       "description": "A release changes cache keys, expiry, invalidation, or the conditions that allow a cached result.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.4",
@@ -99,8 +90,7 @@
       "level": "subcategory",
       "title": "Errors and recovery",
       "description": "Error handling, retry, recovery, or degradation behavior changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "skill"
     },
     {
       "id": "S1.4.1",
@@ -108,8 +98,7 @@
       "level": "kind",
       "title": "Retry-policy revision",
       "description": "A release changes retry timing, attempt limits, or which errors are retried.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.4.2",
@@ -117,8 +106,7 @@
       "level": "kind",
       "title": "Fallback-path revision",
       "description": "A release changes which result or service is used when the normal path fails.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.5",
@@ -126,8 +114,7 @@
       "level": "subcategory",
       "title": "Performance and concurrency",
       "description": "Performance, concurrency, queueing, memory, or resource-use behavior changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "skill"
     },
     {
       "id": "S1.5.1",
@@ -135,8 +122,7 @@
       "level": "kind",
       "title": "Locking revision",
       "description": "A release changes synchronization, lock ordering, or access to shared state.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.5.2",
@@ -144,8 +130,7 @@
       "level": "kind",
       "title": "Allocation revision",
       "description": "A release changes memory allocation, object lifetime, buffering, or resource retention.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.6",
@@ -153,8 +138,7 @@
       "level": "subcategory",
       "title": "Security and data handling",
       "description": "Authorization, secret handling, sensitive-data handling, or audit behavior changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "skill"
     },
     {
       "id": "S1.6.1",
@@ -162,8 +146,7 @@
       "level": "kind",
       "title": "Authorization-check revision",
       "description": "A release changes the code that determines whether a caller can perform an operation.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.6.2",
@@ -171,8 +154,7 @@
       "level": "kind",
       "title": "Sensitive-data handling revision",
       "description": "A release changes how secrets or personal data are logged, stored, transformed, or returned.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.7",
@@ -180,8 +162,7 @@
       "level": "subcategory",
       "title": "Generated behavior and models",
       "description": "Generated code, owned models, rulesets, or other executable behavior owned by the team.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "skill"
     },
     {
       "id": "S1.7.1",
@@ -189,8 +170,7 @@
       "level": "kind",
       "title": "Model release",
       "description": "An owned model version changes the predictions or decisions produced by the system.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S1.7.2",
@@ -198,8 +178,7 @@
       "level": "kind",
       "title": "Generated-code revision",
       "description": "A generator or its input changes executable code that the team builds and ships.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s1-owned-software.md"
+      "origin": "draft"
     },
     {
       "id": "S2",
@@ -208,7 +187,7 @@
       "title": "Consumed software",
       "description": "This profile applies to libraries, frameworks, SDKs, language runtimes, plugins, and transitive packages that execute in the system process. It does not cover a remote service that the system calls, which is S9, or the declaration that assembles an installed image, which is S3.",
       "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "guidance": "The assessor classifies a base image or deployment manifest under S3 when its assembled artifact, rather than its in-process library behavior, is the changed support-boundary element."
     },
     {
       "id": "S2.1",
@@ -216,8 +195,7 @@
       "level": "subcategory",
       "title": "Direct packages",
       "description": "A direct library, framework, SDK, or plugin version changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "skill"
     },
     {
       "id": "S2.1.1",
@@ -225,8 +203,7 @@
       "level": "kind",
       "title": "SDK upgrade",
       "description": "A direct SDK version changes the behavior of calls made by the system.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "draft"
     },
     {
       "id": "S2.1.2",
@@ -234,8 +211,7 @@
       "level": "kind",
       "title": "Framework upgrade",
       "description": "A framework upgrade changes routing, lifecycle, defaults, or integration behavior.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "draft"
     },
     {
       "id": "S2.2",
@@ -243,8 +219,7 @@
       "level": "subcategory",
       "title": "Transitive packages and runtimes",
       "description": "A transitive package, runtime, or generated dependency version changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "skill"
     },
     {
       "id": "S2.2.1",
@@ -252,8 +227,7 @@
       "level": "kind",
       "title": "Transitive dependency update",
       "description": "A dependency of a direct package changes, possibly without a change to the declared direct version.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "draft"
     },
     {
       "id": "S2.2.2",
@@ -261,8 +235,7 @@
       "level": "kind",
       "title": "Language-runtime upgrade",
       "description": "A language runtime version changes parsing, scheduling, garbage collection, or standard-library behavior.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "draft"
     },
     {
       "id": "S2.3",
@@ -270,8 +243,7 @@
       "level": "subcategory",
       "title": "Compatibility and resource use",
       "description": "A compatibility, behavior, performance, or resource-use change occurs in consumed code.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "skill"
     },
     {
       "id": "S2.3.1",
@@ -279,8 +251,7 @@
       "level": "kind",
       "title": "Dependency-default revision",
       "description": "Consumed code changes a default such as a timeout, encoding, or connection setting.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "draft"
     },
     {
       "id": "S2.3.2",
@@ -288,8 +259,7 @@
       "level": "kind",
       "title": "Dependency resource-use revision",
       "description": "Consumed code changes its memory, CPU, thread, or connection requirements.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "draft"
     },
     {
       "id": "S2.4",
@@ -297,8 +267,7 @@
       "level": "subcategory",
       "title": "Provenance, security, and licensing",
       "description": "A consumed package changes its security, provenance, or licensing properties.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "skill"
     },
     {
       "id": "S2.4.1",
@@ -306,8 +275,7 @@
       "level": "kind",
       "title": "Package provenance change",
       "description": "A package changes publisher, build source, signing identity, or delivery channel.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "draft"
     },
     {
       "id": "S2.4.2",
@@ -315,8 +283,7 @@
       "level": "kind",
       "title": "Vulnerable package discovery",
       "description": "New information changes the security status of an already consumed package.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "draft"
     },
     {
       "id": "S2.5",
@@ -324,8 +291,7 @@
       "level": "subcategory",
       "title": "Extensions and agents",
       "description": "A runtime extension, agent, or in-process integration changes its behavior.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "skill"
     },
     {
       "id": "S2.5.1",
@@ -333,8 +299,7 @@
       "level": "kind",
       "title": "Instrumentation-agent update",
       "description": "An in-process tracing or metrics agent changes interception, buffering, or runtime overhead.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "draft"
     },
     {
       "id": "S2.5.2",
@@ -342,8 +307,7 @@
       "level": "kind",
       "title": "Plugin update",
       "description": "A loaded plugin changes behavior or its integration with the host process.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s2-consumed-software.md"
+      "origin": "draft"
     },
     {
       "id": "S3",
@@ -352,7 +316,7 @@
       "title": "Deployment artifacts",
       "description": "This profile applies to declarations and automation that assemble, deploy, start, schedule, or health-check the system without being its application logic. It does not cover effective runtime configuration or data values, which are S4, or underlying platform behavior, which is S5.",
       "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "guidance": "The assessor places a managed-platform outage under S5 even when an S3 artifact selected the platform resource that later failed."
     },
     {
       "id": "S3.1",
@@ -360,8 +324,7 @@
       "level": "subcategory",
       "title": "Build and assembly",
       "description": "Build, package, image, or artifact-assembly definitions change.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "skill"
     },
     {
       "id": "S3.1.1",
@@ -369,8 +332,7 @@
       "level": "kind",
       "title": "Base-image revision",
       "description": "An image definition selects a different operating-system base or installed package set.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "draft"
     },
     {
       "id": "S3.1.2",
@@ -378,8 +340,7 @@
       "level": "kind",
       "title": "Compiler-option revision",
       "description": "A build definition changes optimization, linking, target architecture, or feature flags.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "draft"
     },
     {
       "id": "S3.2",
@@ -387,8 +348,7 @@
       "level": "subcategory",
       "title": "Release and startup",
       "description": "Deployment manifests, release workflows, startup scripts, or initialization automation change.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "skill"
     },
     {
       "id": "S3.2.1",
@@ -396,8 +356,7 @@
       "level": "kind",
       "title": "Release-workflow revision",
       "description": "A deployment workflow changes gates, artifact selection, or the order of rollout steps.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "draft"
     },
     {
       "id": "S3.2.2",
@@ -405,8 +364,7 @@
       "level": "kind",
       "title": "Startup-script revision",
       "description": "Initialization automation changes environment setup, migrations, or readiness behavior.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "draft"
     },
     {
       "id": "S3.3",
@@ -414,8 +372,7 @@
       "level": "subcategory",
       "title": "Scheduling and discovery",
       "description": "Scheduling, scaling, health-check, or service-discovery declarations change.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "skill"
     },
     {
       "id": "S3.3.1",
@@ -423,8 +380,7 @@
       "level": "kind",
       "title": "Health-check declaration revision",
       "description": "A deployment artifact changes a readiness or liveness check, threshold, or timing value.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "draft"
     },
     {
       "id": "S3.3.2",
@@ -432,8 +388,7 @@
       "level": "kind",
       "title": "Resource declaration revision",
       "description": "A manifest changes resource requests, limits, replicas, or placement constraints.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "draft"
     },
     {
       "id": "S3.4",
@@ -441,8 +396,7 @@
       "level": "subcategory",
       "title": "Infrastructure declarations",
       "description": "Infrastructure-as-code, topology declarations, or bootstrap automation change.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "skill"
     },
     {
       "id": "S3.4.1",
@@ -450,8 +404,7 @@
       "level": "kind",
       "title": "Topology-template revision",
       "description": "Infrastructure-as-code changes the declared network, storage, or serving topology.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "draft"
     },
     {
       "id": "S3.4.2",
@@ -459,8 +412,7 @@
       "level": "kind",
       "title": "Bootstrap declaration revision",
       "description": "Provisioning automation changes how a host or resource is initialized.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "draft"
     },
     {
       "id": "S3.5",
@@ -468,8 +420,7 @@
       "level": "subcategory",
       "title": "Deployment identity and provenance",
       "description": "Build or deployment identity, permission, or artifact-provenance configuration changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "skill"
     },
     {
       "id": "S3.5.1",
@@ -477,8 +428,7 @@
       "level": "kind",
       "title": "Pipeline-permission revision",
       "description": "Deployment configuration changes what the build or release identity can access.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "draft"
     },
     {
       "id": "S3.5.2",
@@ -486,8 +436,7 @@
       "level": "kind",
       "title": "Artifact-verification revision",
       "description": "A release definition changes signature checks, provenance checks, or trusted artifact sources.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s3-deployed-support-artifacts.md"
+      "origin": "draft"
     },
     {
       "id": "S4",
@@ -496,7 +445,7 @@
       "title": "Controlled runtime state",
       "description": "This profile applies to state that changes the behavior or protection of the support boundary without changing its executable code. It includes configuration, flags, data, schemas, access policy, partition maps, and credential configuration. It does not include a code change that reads that state, which is S1.",
       "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "guidance": "The assessor may split one source S4 row into separate rows for flags, data, access policy, and credentials when those classes have different owners or change paths."
     },
     {
       "id": "S4.1",
@@ -504,8 +453,7 @@
       "level": "subcategory",
       "title": "Flags, limits, and routing",
       "description": "Feature flags, dynamic configuration, limits, quotas, or routing rules change.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "skill"
     },
     {
       "id": "S4.1.1",
@@ -513,8 +461,7 @@
       "level": "kind",
       "title": "Feature-flag toggle",
       "description": "A live flag value enables, disables, or changes exposure to code that is already deployed.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "draft"
     },
     {
       "id": "S4.1.2",
@@ -522,8 +469,7 @@
       "level": "kind",
       "title": "Runtime-limit revision",
       "description": "An operator changes a live timeout, quota, concurrency limit, or routing weight.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "draft"
     },
     {
       "id": "S4.2",
@@ -531,8 +477,7 @@
       "level": "subcategory",
       "title": "Schemas and records",
       "description": "Schemas, indexes, records, migrations, backfills, or data repairs change.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "skill"
     },
     {
       "id": "S4.2.1",
@@ -540,8 +485,7 @@
       "level": "kind",
       "title": "Schema migration",
       "description": "An operation changes the structure, constraints, or indexes of persisted data.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "draft"
     },
     {
       "id": "S4.2.2",
@@ -549,8 +493,7 @@
       "level": "kind",
       "title": "Data backfill",
       "description": "An operation creates or revises existing records outside the normal request path.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "draft"
     },
     {
       "id": "S4.3",
@@ -558,8 +501,7 @@
       "level": "subcategory",
       "title": "Partitioning and retention",
       "description": "Partition maps, shard assignments, replication settings, or retention rules change.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "skill"
     },
     {
       "id": "S4.3.1",
@@ -567,8 +509,7 @@
       "level": "kind",
       "title": "Shard reassignment",
       "description": "A runtime map changes which partition or replica owns a set of records.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "draft"
     },
     {
       "id": "S4.3.2",
@@ -576,8 +517,7 @@
       "level": "kind",
       "title": "Retention-policy revision",
       "description": "A runtime policy changes when data expires, is archived, or is deleted.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "draft"
     },
     {
       "id": "S4.4",
@@ -585,8 +525,7 @@
       "level": "subcategory",
       "title": "Access policy and secrets",
       "description": "Access policy, authorization mappings, secret references, or credential configuration changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "skill"
     },
     {
       "id": "S4.4.1",
@@ -594,8 +533,7 @@
       "level": "kind",
       "title": "Permission-policy revision",
       "description": "An operator changes authorization mappings or permissions in the control plane.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "draft"
     },
     {
       "id": "S4.4.2",
@@ -603,8 +541,7 @@
       "level": "kind",
       "title": "Secret-reference revision",
       "description": "A configuration value points running software at a different secret or credential version.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "draft"
     },
     {
       "id": "S4.5",
@@ -612,8 +549,7 @@
       "level": "subcategory",
       "title": "Keys and certificates",
       "description": "Certificates, keys, or identity-configuration state changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "skill"
     },
     {
       "id": "S4.5.1",
@@ -621,8 +557,7 @@
       "level": "kind",
       "title": "Certificate rotation",
       "description": "An operation changes the certificate, issuer, or trust configuration used by the system.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "draft"
     },
     {
       "id": "S4.5.2",
@@ -630,8 +565,7 @@
       "level": "kind",
       "title": "Encryption-key rotation",
       "description": "An operation changes the key used to encrypt, decrypt, or sign data.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s4-controlled-runtime-state.md"
+      "origin": "draft"
     },
     {
       "id": "S5",
@@ -640,7 +574,7 @@
       "title": "Infrastructure and platform",
       "description": "This profile applies to the hosts, containers, storage, networks, name resolution, capacity, regions, zones, routing topology, operating systems, and managed-platform behavior that support the system. It covers a consumed resource that changes or fails without being called as an application dependency. A remote service called by the system is S9.",
       "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "guidance": "The profile does not require multi-region or multi-zone deployment for every service. The assessor records the required availability, data durability, and fault-domain coverage before it judges these controls."
     },
     {
       "id": "S5.1",
@@ -648,8 +582,7 @@
       "level": "subcategory",
       "title": "Compute and hosts",
       "description": "Compute capacity, placement, container runtime, or host behavior changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "skill"
     },
     {
       "id": "S5.1.1",
@@ -657,8 +590,7 @@
       "level": "kind",
       "title": "Host loss",
       "description": "A compute host stops executing the software because of failure, eviction, or maintenance.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "draft"
     },
     {
       "id": "S5.1.2",
@@ -666,8 +598,7 @@
       "level": "kind",
       "title": "Compute-shape change",
       "description": "The platform changes available CPU, memory, architecture, or execution limits.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "draft"
     },
     {
       "id": "S5.2",
@@ -675,8 +606,7 @@
       "level": "subcategory",
       "title": "Storage behavior",
       "description": "Storage availability, performance, replication, or durability behavior changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "skill"
     },
     {
       "id": "S5.2.1",
@@ -684,8 +614,7 @@
       "level": "kind",
       "title": "Storage-latency shift",
       "description": "A storage resource has a change in latency or throughput without an application release.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "draft"
     },
     {
       "id": "S5.2.2",
@@ -693,8 +622,7 @@
       "level": "kind",
       "title": "Storage availability loss",
       "description": "A disk, volume, or managed storage path becomes unavailable to the running system.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "draft"
     },
     {
       "id": "S5.3",
@@ -702,8 +630,7 @@
       "level": "subcategory",
       "title": "Network and name resolution",
       "description": "Network connectivity, routing, name resolution, or certificate-transport behavior changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "skill"
     },
     {
       "id": "S5.3.1",
@@ -711,8 +638,7 @@
       "level": "kind",
       "title": "Network partition",
       "description": "Connectivity changes so that some peers are reachable while others are isolated.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "draft"
     },
     {
       "id": "S5.3.2",
@@ -720,8 +646,7 @@
       "level": "kind",
       "title": "DNS resolution change",
       "description": "Name resolution returns different addresses, fails, or has a change in caching behavior.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "draft"
     },
     {
       "id": "S5.4",
@@ -729,8 +654,7 @@
       "level": "subcategory",
       "title": "Regions and fault domains",
       "description": "Region, zone, fault-domain, or topology availability changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "skill"
     },
     {
       "id": "S5.4.1",
@@ -738,8 +662,7 @@
       "level": "kind",
       "title": "Zone outage",
       "description": "A fault-domain event removes compute, network, or storage availability in one zone.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "draft"
     },
     {
       "id": "S5.4.2",
@@ -747,8 +670,7 @@
       "level": "kind",
       "title": "Regional impairment",
       "description": "A regional event changes the availability or capacity of serving and recovery resources.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "draft"
     },
     {
       "id": "S5.5",
@@ -756,8 +678,7 @@
       "level": "subcategory",
       "title": "Managed-platform behavior",
       "description": "Managed-platform release, quota, scaling, or control-plane behavior changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "skill"
     },
     {
       "id": "S5.5.1",
@@ -765,8 +686,7 @@
       "level": "kind",
       "title": "Platform rollout",
       "description": "A provider release changes orchestration, admission, or the behavior of a managed platform.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "draft"
     },
     {
       "id": "S5.5.2",
@@ -774,8 +694,7 @@
       "level": "kind",
       "title": "Platform quota change",
       "description": "A platform quota changes the amount or rate of resource allocation available to the system.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s5-infrastructure-and-platform.md"
+      "origin": "draft"
     },
     {
       "id": "S6",
@@ -784,7 +703,7 @@
       "title": "Demand and transport",
       "description": "This profile applies when demand changes independently of what requests mean. It includes benign and malicious traffic. It does not cover a payload, operation, or parameter combination that makes one request expensive or unsafe, which is S7.",
       "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "guidance": "The assessor records the workload class and the expected demand bound before judging a rate, capacity, or fairness control as absent or partial."
     },
     {
       "id": "S6.1",
@@ -792,8 +711,7 @@
       "level": "subcategory",
       "title": "Sustained growth",
       "description": "Sustained request-rate, concurrency, or connection-count growth occurs.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "skill"
     },
     {
       "id": "S6.1.1",
@@ -801,8 +719,7 @@
       "level": "kind",
       "title": "Request-rate growth",
       "description": "The arrival rate remains above its former baseline long enough to require a capacity response.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "draft"
     },
     {
       "id": "S6.1.2",
@@ -810,8 +727,7 @@
       "level": "kind",
       "title": "Concurrent-connection growth",
       "description": "The number of simultaneous connections or in-flight requests increases over time.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "draft"
     },
     {
       "id": "S6.2",
@@ -819,8 +735,7 @@
       "level": "subcategory",
       "title": "Bursts and storms",
       "description": "A burst, retry storm, recovery surge, or thundering herd occurs.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "skill"
     },
     {
       "id": "S6.2.1",
@@ -828,8 +743,7 @@
       "level": "kind",
       "title": "Retry storm",
       "description": "Clients repeat failed requests together, increasing demand while the system is already impaired.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "draft"
     },
     {
       "id": "S6.2.2",
@@ -837,8 +751,7 @@
       "level": "kind",
       "title": "Recovery surge",
       "description": "Queued or deferred clients return together after an outage or service restoration.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "draft"
     },
     {
       "id": "S6.3",
@@ -846,8 +759,7 @@
       "level": "subcategory",
       "title": "Traffic distribution",
       "description": "Traffic distribution becomes skewed across tenants, keys, regions, or serving paths.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "skill"
     },
     {
       "id": "S6.3.1",
@@ -855,8 +767,7 @@
       "level": "kind",
       "title": "Tenant traffic skew",
       "description": "One tenant accounts for a growing share of request volume, independent of request meaning.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "draft"
     },
     {
       "id": "S6.3.2",
@@ -864,8 +775,7 @@
       "level": "kind",
       "title": "Regional traffic shift",
       "description": "Traffic moves between regions or serving paths and changes their relative load.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "draft"
     },
     {
       "id": "S6.4",
@@ -873,8 +783,7 @@
       "level": "subcategory",
       "title": "Connection behavior",
       "description": "Connection lifetime, protocol behavior, retransmission, or transport churn changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "skill"
     },
     {
       "id": "S6.4.1",
@@ -882,8 +791,7 @@
       "level": "kind",
       "title": "Connection churn",
       "description": "Clients create and discard connections at a rate that changes transport overhead.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "draft"
     },
     {
       "id": "S6.4.2",
@@ -891,8 +799,7 @@
       "level": "kind",
       "title": "Long-lived connection growth",
       "description": "Connections stay open longer and occupy sockets, memory, or other transport resources.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "draft"
     },
     {
       "id": "S6.5",
@@ -900,8 +807,7 @@
       "level": "subcategory",
       "title": "Client transport policy",
       "description": "A client population changes retry, timeout, caching, or reconnect behavior.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "skill"
     },
     {
       "id": "S6.5.1",
@@ -909,8 +815,7 @@
       "level": "kind",
       "title": "Client retry-policy change",
       "description": "A client population changes retry timing or attempts without a server release.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "draft"
     },
     {
       "id": "S6.5.2",
@@ -918,8 +823,7 @@
       "level": "kind",
       "title": "Cache-bypass behavior",
       "description": "Clients stop using local or intermediary caches and send more requests to the origin.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "draft"
     },
     {
       "id": "S6.6",
@@ -927,8 +831,7 @@
       "level": "subcategory",
       "title": "Abuse and denial of service",
       "description": "Abusive or denial-of-service demand changes the load on the service.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "skill"
     },
     {
       "id": "S6.6.1",
@@ -936,8 +839,7 @@
       "level": "kind",
       "title": "Request flood",
       "description": "An actor sends enough requests to change the service demand or available capacity.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "draft"
     },
     {
       "id": "S6.6.2",
@@ -945,8 +847,7 @@
       "level": "kind",
       "title": "Connection-exhaustion attempt",
       "description": "An actor holds or creates connections to consume transport resources.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s6-demand-and-transport.md"
+      "origin": "draft"
     },
     {
       "id": "S7",
@@ -955,7 +856,7 @@
       "title": "Request meaning",
       "description": "This profile applies when a request's content, operation, or semantic combination changes the work that the system performs. It differs from S6, which concerns rate and transport behavior without regard to request meaning.",
       "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "guidance": "The assessor treats a request as both S6 and S7 when its arrival rate and its meaning each need different controls."
     },
     {
       "id": "S7.1",
@@ -963,8 +864,7 @@
       "level": "subcategory",
       "title": "Structure and size",
       "description": "A request has an invalid, malformed, oversized, deeply nested, or unsupported structure.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "skill"
     },
     {
       "id": "S7.1.1",
@@ -972,8 +872,7 @@
       "level": "kind",
       "title": "Payload-size increase",
       "description": "An individual request carries a larger body or collection than the system normally processes.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.1.2",
@@ -981,8 +880,7 @@
       "level": "kind",
       "title": "Malformed or nested payload",
       "description": "A request has invalid syntax, unsupported structure, or nesting that changes parsing work.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.2",
@@ -990,8 +888,7 @@
       "level": "subcategory",
       "title": "Operation cost",
       "description": "A parameter, query shape, filter, aggregation, or operation has an unsafe cost.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "skill"
     },
     {
       "id": "S7.2.1",
@@ -999,8 +896,7 @@
       "level": "kind",
       "title": "Unbounded query",
       "description": "A request omits limits or selects a query plan that has work beyond the expected bound.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.2.2",
@@ -1008,8 +904,7 @@
       "level": "kind",
       "title": "Expensive aggregation",
       "description": "A request asks for a combination of filters or aggregations that increases computation per call.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.3",
@@ -1017,8 +912,7 @@
       "level": "subcategory",
       "title": "Target skew",
       "description": "A request targets a hot key, tenant, partition, or other skewed resource.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "skill"
     },
     {
       "id": "S7.3.1",
@@ -1026,8 +920,7 @@
       "level": "kind",
       "title": "Hot-key request",
       "description": "A request targets a key that has contention or work concentrated on one resource.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.3.2",
@@ -1035,8 +928,7 @@
       "level": "kind",
       "title": "Tenant-wide operation",
       "description": "One request spans a tenant or partition and concentrates work despite a normal request rate.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.4",
@@ -1044,8 +936,7 @@
       "level": "subcategory",
       "title": "Versions and combinations",
       "description": "A request presents an unsupported version, combination of fields, or compatibility state.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "skill"
     },
     {
       "id": "S7.4.1",
@@ -1053,8 +944,7 @@
       "level": "kind",
       "title": "Unsupported API version",
       "description": "A request names an interface version that the receiving system does not support.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.4.2",
@@ -1062,8 +952,7 @@
       "level": "kind",
       "title": "Unexpected field combination",
       "description": "Individually valid fields appear together in a combination the system does not handle.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.5",
@@ -1071,8 +960,7 @@
       "level": "subcategory",
       "title": "Repetition and ordering",
       "description": "A request repeats, reorders, races, or replays an operation with persistent effects.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "skill"
     },
     {
       "id": "S7.5.1",
@@ -1080,8 +968,7 @@
       "level": "kind",
       "title": "Duplicate state-changing request",
       "description": "A client repeats an operation that has persistent effects, with or without an idempotency key.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.5.2",
@@ -1089,8 +976,7 @@
       "level": "kind",
       "title": "Concurrent conflicting requests",
       "description": "Requests race or arrive out of order while changing the same state.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.6",
@@ -1098,8 +984,7 @@
       "level": "subcategory",
       "title": "Protection boundaries",
       "description": "A request crosses an authorization, privacy, retention, or policy boundary.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "skill"
     },
     {
       "id": "S7.6.1",
@@ -1107,8 +992,7 @@
       "level": "kind",
       "title": "Cross-tenant access attempt",
       "description": "A request attempts to access or change a resource owned by another tenant.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.6.2",
@@ -1116,8 +1000,7 @@
       "level": "kind",
       "title": "Restricted-data request",
       "description": "A request asks for data or an operation outside the caller’s privacy or retention boundary.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.7",
@@ -1125,8 +1008,7 @@
       "level": "subcategory",
       "title": "Usage assumptions",
       "description": "A new client usage pattern changes semantic assumptions without changing aggregate demand.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "skill"
     },
     {
       "id": "S7.7.1",
@@ -1134,8 +1016,7 @@
       "level": "kind",
       "title": "New operation sequence",
       "description": "Clients use valid operations in an order that exposes an assumption in the service.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S7.7.2",
@@ -1143,8 +1024,7 @@
       "level": "kind",
       "title": "New locale or time pattern",
       "description": "Client inputs introduce locale, calendar, or time-zone cases that change request interpretation.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s7-request-meaning.md"
+      "origin": "draft"
     },
     {
       "id": "S8",
@@ -1153,7 +1033,7 @@
       "title": "Internal interactions",
       "description": "This profile applies to calls, messages, replication, coordination, control-plane commands, and health checks among components inside the unit of supportability. It does not cover a call to a service outside that boundary, which is S9.",
       "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "guidance": "The assessor separates caller and callee rows when they have different owners, evidence, or control paths, even when they participate in the same interaction."
     },
     {
       "id": "S8.1",
@@ -1161,8 +1041,7 @@
       "level": "subcategory",
       "title": "Calls and fanout",
       "description": "A synchronous call, fanout, or service-to-service request path changes behavior.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "skill"
     },
     {
       "id": "S8.1.1",
@@ -1170,8 +1049,7 @@
       "level": "kind",
       "title": "Fanout expansion",
       "description": "An internal request contacts more components or performs more downstream calls than before.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "draft"
     },
     {
       "id": "S8.1.2",
@@ -1179,8 +1057,7 @@
       "level": "kind",
       "title": "Internal deadline mismatch",
       "description": "The caller and callee have deadline behavior that changes cancellation or completion semantics.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "draft"
     },
     {
       "id": "S8.2",
@@ -1188,8 +1065,7 @@
       "level": "subcategory",
       "title": "Queues and streams",
       "description": "A queue, stream, event, or scheduled asynchronous path changes timing or delivery behavior.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "skill"
     },
     {
       "id": "S8.2.1",
@@ -1197,8 +1073,7 @@
       "level": "kind",
       "title": "Message-delivery delay",
       "description": "An internal queue or stream delivers work later and changes processing order or backlog.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "draft"
     },
     {
       "id": "S8.2.2",
@@ -1206,8 +1081,7 @@
       "level": "kind",
       "title": "Redelivery behavior change",
       "description": "An internal message path changes acknowledgement or delivery behavior and repeats work.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "draft"
     },
     {
       "id": "S8.3",
@@ -1215,8 +1089,7 @@
       "level": "subcategory",
       "title": "Consistency and replay",
       "description": "Replication, caching, consistency, ordering, duplication, or replay behavior changes.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "skill"
     },
     {
       "id": "S8.3.1",
@@ -1224,8 +1097,7 @@
       "level": "kind",
       "title": "Replication lag",
       "description": "Internal replicas fall further behind and change the freshness of served data.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "draft"
     },
     {
       "id": "S8.3.2",
@@ -1233,8 +1105,7 @@
       "level": "kind",
       "title": "Event replay",
       "description": "An internal replay repeats historical operations or messages against current state.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "draft"
     },
     {
       "id": "S8.4",
@@ -1242,8 +1113,7 @@
       "level": "subcategory",
       "title": "Version compatibility",
       "description": "Producer and consumer versions become incompatible or roll out in a different order.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "skill"
     },
     {
       "id": "S8.4.1",
@@ -1251,8 +1121,7 @@
       "level": "kind",
       "title": "Producer-first rollout",
       "description": "A producer emits a new format before all consumers can accept it.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "draft"
     },
     {
       "id": "S8.4.2",
@@ -1260,8 +1129,7 @@
       "level": "kind",
       "title": "Consumer contract divergence",
       "description": "An internal consumer changes its assumptions while an older producer continues to run.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "draft"
     },
     {
       "id": "S8.5",
@@ -1269,8 +1137,7 @@
       "level": "subcategory",
       "title": "Coordination and health",
       "description": "Health checks, leader election, coordination, or control-plane commands behave differently.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "skill"
     },
     {
       "id": "S8.5.1",
@@ -1278,8 +1145,7 @@
       "level": "kind",
       "title": "Leader-election churn",
       "description": "Internal coordination changes leaders often enough to affect serving or state ownership.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "draft"
     },
     {
       "id": "S8.5.2",
@@ -1287,8 +1153,7 @@
       "level": "kind",
       "title": "Health-check disagreement",
       "description": "Components have different views of readiness and route work to an unsuitable peer.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "draft"
     },
     {
       "id": "S8.6",
@@ -1296,8 +1161,7 @@
       "level": "subcategory",
       "title": "Failure propagation",
       "description": "An internal workload becomes saturated and propagates delay or failure to another component.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "skill"
     },
     {
       "id": "S8.6.1",
@@ -1305,8 +1169,7 @@
       "level": "kind",
       "title": "Queue saturation",
       "description": "An internal workload fills a queue or work pool and delays other components.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "draft"
     },
     {
       "id": "S8.6.2",
@@ -1314,8 +1177,7 @@
       "level": "kind",
       "title": "Shared-pool exhaustion",
       "description": "One component consumes a connection, thread, or memory pool used by other paths.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s8-internal-component-interactions.md"
+      "origin": "draft"
     },
     {
       "id": "S9",
@@ -1324,7 +1186,7 @@
       "title": "External dependencies",
       "description": "This profile applies to remote services, data stores, identity providers, certificate authorities, and other resources outside the unit of supportability. It covers availability, latency, contract, credential, data, and semantic changes in those dependencies. It does not cover an in-process library, which is S2.",
       "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "guidance": "The agent assesses client-owned controls, such as deadlines, retries, circuit containment, fallback, interface validation, dependency monitoring, and an operator response path, directly. It treats a provider's durability, backup, repair, retention, or regional-recovery capability as a guarantee that needs supplied contract, architecture, or exercise evidence. The agent records such a guarantee as unknown when that evidence is unavailable; it does not claim that the client implements the provider's control.\n\nThe agent excludes a provider control only when the support-boundary statement says that the service does not rely on the capability for an in-scope user outcome. A dependency responsibility record names the provider, client, needed guarantee, evidence source, owner, and escalation path.\n\nThe assessor creates separate rows for each caller when the same dependency has different timeouts, fallbacks, credentials, data semantics, or user outcomes for different callers."
     },
     {
       "id": "S9.1",
@@ -1332,8 +1194,7 @@
       "level": "subcategory",
       "title": "Availability and latency",
       "description": "A dependency becomes unavailable, slow, overloaded, or intermittently reachable.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "skill"
     },
     {
       "id": "S9.1.1",
@@ -1341,8 +1202,7 @@
       "level": "kind",
       "title": "Provider outage",
       "description": "A service outside the support boundary stops completing operations.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "draft"
     },
     {
       "id": "S9.1.2",
@@ -1350,8 +1210,7 @@
       "level": "kind",
       "title": "Provider latency shift",
       "description": "A dependency response time increases or becomes intermittent without a client release.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "draft"
     },
     {
       "id": "S9.2",
@@ -1359,8 +1218,7 @@
       "level": "subcategory",
       "title": "Interface contracts",
       "description": "A dependency changes an API, protocol, schema, version, response, or error contract.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "skill"
     },
     {
       "id": "S9.2.1",
@@ -1368,8 +1226,7 @@
       "level": "kind",
       "title": "Provider schema revision",
       "description": "A provider changes a response schema, field representation, or protocol contract.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "draft"
     },
     {
       "id": "S9.2.2",
@@ -1377,8 +1234,7 @@
       "level": "kind",
       "title": "Provider error-contract revision",
       "description": "A provider changes status codes, error bodies, or which conditions are retryable.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "draft"
     },
     {
       "id": "S9.3",
@@ -1386,8 +1242,7 @@
       "level": "subcategory",
       "title": "Quotas, cost, and policy",
       "description": "A dependency changes rate limits, quotas, pricing, capacity, or traffic policy.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "skill"
     },
     {
       "id": "S9.3.1",
@@ -1395,8 +1250,7 @@
       "level": "kind",
       "title": "Provider rate-limit revision",
       "description": "A provider changes a rate limit, quota window, or admission policy.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "draft"
     },
     {
       "id": "S9.3.2",
@@ -1404,8 +1258,7 @@
       "level": "kind",
       "title": "Provider pricing revision",
       "description": "A provider changes the cost of operations, storage, or transferred data.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "draft"
     },
     {
       "id": "S9.4",
@@ -1413,8 +1266,7 @@
       "level": "subcategory",
       "title": "Identity and trust",
       "description": "A dependency changes credentials, permissions, certificates, identity, or trust behavior.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "skill"
     },
     {
       "id": "S9.4.1",
@@ -1422,8 +1274,7 @@
       "level": "kind",
       "title": "Provider credential revocation",
       "description": "A provider revokes a credential or changes the permissions attached to it.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "draft"
     },
     {
       "id": "S9.4.2",
@@ -1431,8 +1282,7 @@
       "level": "kind",
       "title": "Provider trust-chain change",
       "description": "A provider changes certificates, issuers, or identity behavior used by clients.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "draft"
     },
     {
       "id": "S9.5",
@@ -1440,8 +1290,7 @@
       "level": "subcategory",
       "title": "Returned data",
       "description": "A dependency returns stale, incomplete, inconsistent, or semantically changed data.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "skill"
     },
     {
       "id": "S9.5.1",
@@ -1449,8 +1298,7 @@
       "level": "kind",
       "title": "Stale provider response",
       "description": "A dependency returns data that is older than the client’s required freshness bound.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "draft"
     },
     {
       "id": "S9.5.2",
@@ -1458,8 +1306,7 @@
       "level": "kind",
       "title": "Provider semantic revision",
       "description": "A provider returns structurally valid data with a changed meaning, completeness, or consistency.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "draft"
     },
     {
       "id": "S9.6",
@@ -1467,8 +1314,7 @@
       "level": "subcategory",
       "title": "Migration and recovery",
       "description": "A dependency migration, regional event, or recovery event changes its serving behavior.",
-      "origin": "skill",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "skill"
     },
     {
       "id": "S9.6.1",
@@ -1476,8 +1322,7 @@
       "level": "kind",
       "title": "Provider regional failover",
       "description": "A provider moves serving to another region and changes latency, consistency, or availability.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "draft"
     },
     {
       "id": "S9.6.2",
@@ -1485,8 +1330,8 @@
       "level": "kind",
       "title": "Provider restore event",
       "description": "A dependency recovery changes data state or which operations have taken effect.",
-      "origin": "draft",
-      "sourceRef": "software-maturity-analysis/references/source-profiles/s9-external-dependencies.md"
+      "origin": "draft"
     }
-  ]
+  ],
+  "description": "The catalog defines sources of software change for a unit of supportability: the interface a customer uses or the release a customer installs, together with its components, deployment and control planes, infrastructure, and manual operating procedures. The boundary includes owners and exclusions. Its outcomes can include correctness and data integrity, availability and durability, latency and capacity, security and privacy, compatibility, and resource efficiency.\n\nA change can belong to more than one source when it changes more than one part of that boundary. Classification depends on the element that changes, queue and platform ownership, and the client or provider role. A missing boundary fact is an open classification question.\n\nThe categories and subcategories define the scope of the catalog. The kinds of change are proposed examples within that scope; they are not an exhaustive list. A new kind or subcategory is appropriate when a change has a distinct control path. Its description should state that difference. These definitions are editable here and govern subsequent mitigation links and assessments."
 }

@@ -97,6 +97,35 @@ test('double-click editing saves a title and description, and Escape cancels', a
   click('#redo'); await saved();
   assert.equal((await disk()).nodes.find(node => node.id === 'S3').description, text.value);
 });
+test('scope and guidance are complete editable catalog content, with search and undo', async t => {
+  const { window, $, click, saved, disk } = await setup(t);
+  const initial = await disk();
+  assert.equal($('[data-id="S3"] [data-field="guidance"]').textContent, initial.nodes.find(node => node.id === 'S3').guidance);
+  click('[data-id="S3"] [data-action="menu"]');
+  assert.equal($('#modal a'), null);
+  click('[data-edit-guidance]');
+  const guidance = $('[data-id="S3"] textarea');
+  guidance.value = 'This source has a boundary rule.\n\n<em>A platform outage belongs to S5.</em>';
+  guidance.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Enter', ctrlKey: true, bubbles: true }));
+  await saved();
+  assert.equal((await disk()).nodes.find(node => node.id === 'S3').guidance, guidance.value);
+  assert.equal($('[data-id="S3"] .item-guidance em'), null);
+  $('#search').value = 'boundary rule';
+  $('#search').dispatchEvent(new window.Event('input', { bubbles: true }));
+  assert.equal($('#search-results [data-result="S3"]').textContent.includes('Deployment artifacts'), true);
+  const scope = $('[data-catalog-field="description"]');
+  scope.dispatchEvent(new window.MouseEvent('dblclick', { bubbles: true }));
+  const editor = $('#catalog-scope textarea'); editor.value = 'The scope includes the installed release.\n\nOwners have boundaries.';
+  editor.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Enter', ctrlKey: true, bubbles: true }));
+  await saved();
+  assert.equal((await disk()).description, editor.value);
+  assert.equal($('[data-catalog-field="description"]').textContent, editor.value);
+  click('#undo'); await saved();
+  assert.equal((await disk()).description, initial.description);
+  assert.equal((await disk()).nodes.find(node => node.id === 'S3').guidance, guidance.value);
+  click('#redo'); await saved();
+  assert.equal((await disk()).description, editor.value);
+});
 test('the interface creates all levels, moves an item, deletes a branch, and restores it', async t => {
   const { window, $, click, submit, disk, saved } = await setup(t);
   for (const [level, title] of [['category', 'Review category'], ['subcategory', 'Review branch'], ['kind', 'Review change']]) {

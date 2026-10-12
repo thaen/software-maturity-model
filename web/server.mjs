@@ -7,8 +7,7 @@ import { validateCatalog } from './public/catalog.js';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const publicRoot = resolve(root, 'public');
-const projectRoot = resolve(root, '..');
-const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.md': 'text/plain; charset=utf-8', '.svg': 'image/svg+xml' };
+const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml' };
 
 export function createCatalogServer({ dataFile = resolve(root, 'data/catalog.json') } = {}) {
   let writeQueue = Promise.resolve();
@@ -39,7 +38,7 @@ export function createCatalogServer({ dataFile = resolve(root, 'data/catalog.jso
         const write = writeQueue.then(async () => {
           const current = await load();
           if (incoming.revision !== current.revision) return json(res, 409, { error: 'The catalog changed in another tab or on disk. Reload before making more changes.' });
-          const saved = { schemaVersion: 1, revision: current.revision + 1, updatedAt: new Date().toISOString(), nodes: incoming.nodes };
+          const saved = { schemaVersion: 1, revision: current.revision + 1, updatedAt: new Date().toISOString(), ...(incoming.description != null ? { description: incoming.description } : {}), nodes: incoming.nodes };
           const temporary = `${dataFile}.${randomUUID()}.tmp`;
           await mkdir(dirname(dataFile), { recursive: true });
           await writeFile(temporary, `${JSON.stringify(saved, null, 2)}\n`, 'utf8');
@@ -51,12 +50,9 @@ export function createCatalogServer({ dataFile = resolve(root, 'data/catalog.jso
       }
       if (pathname.startsWith('/api/')) return json(res, 405, { error: 'The API operation is not supported.' });
       if (req.method !== 'GET' && req.method !== 'HEAD') return json(res, 405, { error: 'Only GET and HEAD are supported here.' });
-      const isReference = pathname.startsWith('/references/');
-      const base = isReference ? projectRoot : publicRoot;
-      const relative = isReference ? pathname.slice('/references/'.length) : pathname === '/' ? 'index.html' : pathname.slice(1);
-      if (isReference && !/^software-maturity-analysis\/references\/source-profiles\/s[1-9]-[a-z-]+\.md$/.test(relative)) return json(res, 404, { error: 'The reference does not exist.' });
-      const path = resolve(base, relative);
-      if (!path.startsWith(`${base}${sep}`)) return json(res, 403, { error: 'The path is outside the application.' });
+      const relative = pathname === '/' ? 'index.html' : pathname.slice(1);
+      const path = resolve(publicRoot, relative);
+      if (!path.startsWith(`${publicRoot}${sep}`)) return json(res, 403, { error: 'The path is outside the application.' });
       const body = await readFile(path);
       res.writeHead(200, { 'Content-Type': mime[extname(path)] || 'application/octet-stream', 'Cache-Control': 'no-cache' });
       res.end(req.method === 'HEAD' ? undefined : body);

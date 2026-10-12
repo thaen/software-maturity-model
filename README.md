@@ -47,15 +47,25 @@ atomic file replacement. The file belongs in Git. Failed saves leave the previou
 place, and a revision check rejects a stale write from another tab instead of overwriting it.
 Reloading the tab obtains the latest catalog after a conflict.
 
-The initial catalog has nine categories and 52 subcategories from the current
-[source profiles](software-maturity-analysis/references/source-profiles/README.md). Its 104 kinds
-of change are draft examples proposed on 2026-10-11. They require review and do not claim to be
-an exhaustive list. Each seeded item has a source reference; its actions menu opens the profile.
-Moving or editing an item retains its ID and provenance. New items have a `user` origin.
+The catalog is the authority for change definitions. Every displayed description is the full
+saved text, and the scope guidance is editable by double-click or F2. The catalog scope below
+the columns is also editable. Search includes the scope guidance on each item.
 
-The JSON object has `schemaVersion: 1`, a `revision`, an `updatedAt` timestamp, and a `nodes` array.
-Each node has `id`, `parentId`, `level`, `title`, `description`, and `origin`. A source-derived
-node also has `sourceRef`. The array order determines sibling order. A category has a null parent;
+The audit on 2026-10-11 checked all nine source definitions and all 52 vector definitions against
+the skill. Those definitions are present in full. Eleven source guidance paragraphs were brought
+into the editor, and the catalog scope summarizes the boundary and classification rules.
+The 104 kinds of change remain proposed examples for review and do not exhaust their parents'
+scope. The dated migration record is in [web/CATALOG-AUDIT.md](web/CATALOG-AUDIT.md).
+
+The earlier skill material was an input to the catalog. The app does not link to or serve its
+profiles, and an edit never reloads definitions from those files. Moving or editing an item
+retains its ID and origin. New items have a `user` origin.
+
+The JSON object has `schemaVersion: 1`, a `revision`, an `updatedAt` timestamp, an optional
+`description` for the catalog scope, and a `nodes` array. Each node has `id`, `parentId`, `level`,
+`title`, `description`, and `origin`, with optional `guidance`. Legacy imports can have `sourceRef`;
+validation discards that field and preserves their definitions. The array order determines
+sibling order. A category has a null parent;
 a subcategory has a category parent; a kind has a subcategory parent. Stable IDs allow future
 mitigation and assessment records to refer to a change definition after it moves.
 
@@ -77,9 +87,12 @@ repository boundaries; they are not assessment or mitigation editors yet.
 6. Opportunity analysis identifies both targeted repairs and initiatives that address patterns
    across teams.
 
-The current skill and its references remain in
-[software-maturity-analysis/](software-maturity-analysis/SKILL.md). The `fmea/` prototype is a
-separate local artifact and is not part of the webapp.
+The earlier assessment skill remains in `software-maturity-analysis/` as migration material.
+Its control defaults, conditions, reasons, and evidence cues will seed the mitigation phase.
+The new assessment workflow will consume a revision of the app catalogs; it will not use the
+older profile files as a second authority for change definitions. The mitigation proposal is
+in [PLAN.md](PLAN.md). The `fmea/` prototype is a separate local artifact and is not part of the
+webapp.
 
 ## The checks cover catalog invariants and persistence.
 
@@ -89,10 +102,11 @@ npm test
 ```
 
 The tests cover ordering at all three levels, parent changes with descendants, invalid moves,
-branch deletion, editing, import validation, skill references, disk persistence, competing
+branch deletion, editing, import validation, legacy reference removal, disk persistence, competing
 writes, static-file access, and the loopback request boundary. The tests use temporary catalog
 files and do not change the working catalog. The interface checks use jsdom and the real local
-API to verify branch selection, double-click editing, CRUD, undo, redo, search, and plan views.
+API to verify branch selection, double-click editing of definitions and scope guidance, CRUD,
+undo, redo, search, and plan views.
 These checks do not verify browser layout or native dragging. On 2026-10-11, opening a new
 agent tab in Chrome returned `ERR_BLOCKED_BY_CLIENT`, even though the user reported that both
 loopback hosts were allowed. An existing user-opened catalog tab was accessible and reloaded

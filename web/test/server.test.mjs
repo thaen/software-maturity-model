@@ -22,21 +22,26 @@ async function setup(t) {
 }
 const put = (url, body, headers = {}) => fetch(`${url}/api/catalog`, { method: 'PUT', headers: { 'Content-Type': 'application/json', ...headers }, body: JSON.stringify(body) });
 
-test('the application serves its assets and source references without exposing project files', async t => {
+test('the application serves its assets without exposing skill references or project files', async t => {
   const { url } = await setup(t);
-  for (const path of ['/', '/app.js', '/catalog.js', '/styles.css', '/references/software-maturity-analysis/references/source-profiles/s1-owned-software.md']) assert.equal((await fetch(url + path)).status, 200);
+  for (const path of ['/', '/app.js', '/catalog.js', '/styles.css']) assert.equal((await fetch(url + path)).status, 200);
   const home = await fetch(url);
   assert.match(home.headers.get('content-security-policy'), /frame-ancestors 'none'/);
   assert.equal((await fetch(`${url}/references/PLAN.md`)).status, 404);
+  assert.equal((await fetch(`${url}/references/software-maturity-analysis/references/source-profiles/s1-owned-software.md`)).status, 404);
   assert.equal((await fetch(`${url}/%2e%2e%2fPLAN.md`)).status, 403);
 });
 test('saved changes are on disk and survive another server instance', async t => {
   const { url, dataFile } = await setup(t);
   const edited = fixture(); edited.nodes[0].title = 'Saved category';
+  edited.description = 'The catalog defines sources within a support boundary.';
+  edited.nodes[0].guidance = 'This category has a classification rule.';
   const response = await put(url, edited);
   assert.equal(response.status, 200);
   const saved = await response.json();
   assert.equal(saved.revision, 1); assert.ok(saved.updatedAt);
+  assert.equal(saved.description, edited.description);
+  assert.equal(saved.nodes[0].guidance, edited.nodes[0].guidance);
   assert.equal(JSON.parse(await readFile(dataFile, 'utf8')).nodes[0].title, 'Saved category');
   const second = createCatalogServer({ dataFile }); second.listen(0, '127.0.0.1'); await once(second, 'listening');
   t.after(async () => { second.closeAllConnections(); await new Promise(resolve => second.close(resolve)); });

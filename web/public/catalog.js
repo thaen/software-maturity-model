@@ -5,13 +5,14 @@ export function validateCatalog(catalog) {
     throw new Error('The file must have schemaVersion 1, a revision number, and a nodes array.');
   }
   if (catalog.nodes.length > 10000) throw new Error('The catalog can have at most 10,000 items.');
+  if (catalog.description != null && (typeof catalog.description !== 'string' || catalog.description.length > 10000)) throw new Error('The catalog scope must be text with at most 10,000 characters.');
   const byId = new Map();
   for (const node of catalog.nodes) {
     if (!node || typeof node.id !== 'string' || !/^[a-zA-Z0-9._-]{1,100}$/.test(node.id) || byId.has(node.id)) throw new Error('Every item must have a unique ID.');
     if (!LEVELS.includes(node.level)) throw new Error('An item has an unsupported level.');
     if (typeof node.title !== 'string' || !node.title.trim() || node.title.length > 200) throw new Error('Each title must have between 1 and 200 characters.');
     if (typeof node.description !== 'string' || node.description.length > 10000) throw new Error('Descriptions must be text with at most 10,000 characters.');
-    if (node.sourceRef != null && (typeof node.sourceRef !== 'string' || !/^software-maturity-analysis\/references\/source-profiles\/s[1-9]-[a-z-]+\.md$/.test(node.sourceRef))) throw new Error('The skill reference is not a source-profile path.');
+    if (node.guidance != null && (typeof node.guidance !== 'string' || node.guidance.length > 10000)) throw new Error('Scope guidance must be text with at most 10,000 characters.');
     if (!['skill', 'draft', 'user'].includes(node.origin)) throw new Error('Each item must have a skill, draft, or user origin.');
     byId.set(node.id, node);
   }
@@ -23,7 +24,8 @@ export function validateCatalog(catalog) {
       throw new Error('Subcategories belong to categories, and kinds belong to subcategories.');
     }
   }
-  return catalog;
+  // Older exports may have reference paths. Definitions now belong to this catalog.
+  return { ...catalog, nodes: catalog.nodes.map(({ sourceRef, ...node }) => node) };
 }
 
 export function children(catalog, parentId) {
@@ -39,9 +41,12 @@ export function changeCatalog(catalog, action) {
   const node = next.nodes.find(item => item.id === action.id);
   if (action.type === 'add') {
     next.nodes.push(action.node);
+  } else if (action.type === 'updateCatalog') {
+    if (action.field !== 'description') throw new Error('Only the catalog scope can be edited.');
+    next.description = action.value;
   } else if (action.type === 'update') {
     if (!node) throw new Error('The item no longer exists.');
-    if (!['title', 'description'].includes(action.field)) throw new Error('Only titles and descriptions can be edited.');
+    if (!['title', 'description', 'guidance'].includes(action.field)) throw new Error('Only titles, descriptions, and scope guidance can be edited.');
     node[action.field] = action.field === 'title' ? action.value.trim() : action.value;
   } else if (action.type === 'delete') {
     if (!node) throw new Error('The item no longer exists.');

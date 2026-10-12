@@ -14,12 +14,15 @@ const fixture = () => ({ schemaVersion: 1, revision: 0, nodes: [
   { id: 'k2', parentId: 's1', level: 'kind', title: 'Second kind', description: '', origin: 'user' }
 ] });
 
-test('the catalog has valid parent relationships and resolvable skill provenance', async () => {
+test('the working catalog has valid parent relationships', () => {
   validateCatalog(seed);
-  for (const node of seed.nodes) {
-    if (node.sourceRef) await readFile(new URL(`../../${node.sourceRef}`, import.meta.url));
-    if (node.origin === 'draft') assert.equal(node.level, 'kind');
-  }
+});
+test('legacy reference paths are discarded without changing imported definitions', () => {
+  const original = fixture(); original.nodes[0].sourceRef = '../old-reference';
+  const imported = validateCatalog(original);
+  assert.equal(imported.nodes[0].sourceRef, undefined);
+  assert.equal(original.nodes[0].sourceRef, '../old-reference');
+  assert.equal(imported.nodes[0].description, original.nodes[0].description);
 });
 test('reordering works at every level without changing IDs or children', () => {
   for (const [id, parentId, beforeId] of [['c2', null, 'c1'], ['s2', 'c1', 's1'], ['k2', 's1', 'k1']]) {
@@ -58,13 +61,25 @@ test('new items and text edits accept Unicode and preserve markup as text', () =
   assert.equal(updated.nodes.at(-1).description, 'A key changes. λ <script> has no executable meaning here.');
   assert.throws(() => changeCatalog(created, { type: 'update', id: 'new', field: 'title', value: '  ' }));
 });
-test('imports reject duplicate IDs, unknown formats, oversized text, and unexpected references', () => {
+test('catalog scope and node guidance have editable text that survives tree operations', () => {
+  const scoped = changeCatalog(fixture(), { type: 'updateCatalog', field: 'description', value: 'The boundary includes manual operations.' });
+  const guided = changeCatalog(scoped, { type: 'update', id: 's1', field: 'guidance', value: 'One event can have more than one source.\n\nThe parent defines its scope.' });
+  const moved = changeCatalog(guided, { type: 'move', id: 's1', parentId: 'c2' });
+  assert.equal(moved.description, scoped.description);
+  assert.equal(moved.nodes.find(node => node.id === 's1').guidance, guided.nodes.find(node => node.id === 's1').guidance);
+  assert.throws(() => changeCatalog(moved, { type: 'updateCatalog', field: 'revision', value: 5 }));
+});
+test('imports reject duplicate IDs, unknown formats, and oversized or invalid text fields', () => {
   assert.throws(() => validateCatalog({ ...fixture(), schemaVersion: 2 }));
   assert.throws(() => validateCatalog({ ...fixture(), revision: -1 }));
   const duplicate = fixture(); duplicate.nodes.push(duplicate.nodes[0]);
   assert.throws(() => validateCatalog(duplicate));
   const oversized = fixture(); oversized.nodes[0].title = 'x'.repeat(201);
   assert.throws(() => validateCatalog(oversized));
-  const path = fixture(); path.nodes[0].sourceRef = '../secret';
-  assert.throws(() => validateCatalog(path));
+  const scope = fixture(); scope.description = 'x'.repeat(10001);
+  assert.throws(() => validateCatalog(scope));
+  const guidance = fixture(); guidance.nodes[0].guidance = [];
+  assert.throws(() => validateCatalog(guidance));
+  guidance.nodes[0].guidance = 'x'.repeat(10001);
+  assert.throws(() => validateCatalog(guidance));
 });
