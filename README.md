@@ -90,9 +90,10 @@ repository boundaries; they are not assessment or mitigation editors yet.
 The earlier assessment skill remains in `software-maturity-analysis/` as migration material.
 Its control defaults, conditions, reasons, and evidence cues will seed the mitigation phase.
 The new assessment workflow will consume a revision of the app catalogs; it will not use the
-older profile files as a second authority for change definitions. The mitigation proposal is
-in [PLAN.md](PLAN.md). The `fmea/` prototype is a separate local artifact and is not part of the
-webapp.
+older profile files as a second authority for change definitions. The proposal for the next
+seven increments is in [IMPLEMENTATION-PLAN.md](IMPLEMENTATION-PLAN.md), with the conceptual
+background in [PLAN.md](PLAN.md). The `fmea/` prototype is a separate local artifact and is not
+part of the webapp.
 
 ## The checks cover catalog invariants and persistence.
 

@@ -32,92 +32,33 @@ The migration check is recorded in `web/CATALOG-AUDIT.md`.
 
 The assessment workflow will read a snapshot or export of the catalog and record its revision.
 Stable IDs are identities; their spelling is not a path. Current `parentId` relationships define
-the hierarchy after a move. A change to a definition can require a review of existing mitigation
-links and assessments, while a change to display order alone does not change applicability.
+the hierarchy after a move. Definition and hierarchy edits determine the catalog used by future
+runs. Completed assessments retain their input snapshots; reassessment and invalidation are outside the current
+implementation scope. Display order alone does not change applicability.
 
-## Mitigations can have a hierarchy and a view beside changes.
+## The implementation proposal was expanded on 2026-10-12.
 
-The following design is a proposal for the next phase. Ethan has not yet chosen its layout.
+The [implementation plan](IMPLEMENTATION-PLAN.md) defines seven increments for review. It
+replaces the earlier mitigation proposal and retains the existing change editor as the starting
+point. The UI remains the authority, and category names can change without losing stable IDs.
 
-The recommendation is to give mitigations their own hierarchy in the sidebar and use an optional
-fourth column in Sources of change to show links to those same mitigation records. A mitigation
-can apply to several changes, and a change can have several mitigations. Admission control can
-limit demand growth, costly request work, internal overload, and the effects of dependency quotas.
-One definition should serve all of those links. Editing that definition from either view changes
-the same record.
+The first three increments add the mitigation editor, contextual applicability and dependency
+relations, and the connection list, hierarchy matrix, and paired outlines. An optional fourth
+column shows the same mitigation records for the selected change. The later increments add
+systems and approved implementations, criterion-based assessments and evidence, organization
+capabilities and comparisons, and opportunity analysis with observed improvement results.
 
-| View | The view has this purpose. | The view owns this operation. |
-| --- | --- | --- |
-| The Mitigations sidebar view has a hierarchy. | You can author and review all protection definitions, including ones with no links yet. | You can create, edit, delete, reorder, and reparent mitigation records. |
-| The Sources of change view can have a fourth column. | You can review the protections that apply to the selected change and understand their conditions. | You can add or remove a link, edit its reason or condition, and edit its shared mitigation definition. |
+Ethan requested all the model improvements from the research except reassessment and
+invalidation. Those concerns and their scheduling or event hooks are deferred. Future runs may
+have a cadence or follow commits or deployments, depending on cost. The implementation records
+run provenance without expiry states or invalidation propagation.
 
-The fourth column should be a toggle because four columns can leave little room for definitions.
-It follows the selected category, vector, or kind and uses page scrolling. On a narrow screen, it
-can be a section below the selected branch. Selecting a mitigation can show every change linked
-to it and the source of each link.
+Generic catalogs and workflow code stay in this repository. Organization implementations,
+system descriptions, evidence, and findings have a separate workspace in a work repository.
+The implementation plan has record boundaries, migration rules, increment acceptance criteria,
+and the proposed choices for review. Implementation has not started under this proposal.
 
-### The catalog has families and independently assessable mitigations.
-
-The skill supplies 106 controls in eight families: testing, review, validation, rollout,
-detection, automatic mitigation, operator mitigation, and architecture. Those families can seed
-the top level of the mitigation hierarchy. Each atomic control is a leaf. Another grouping level
-can be introduced when it has a purpose; the initial model does not need an empty level to match
-the three columns of the change catalog.
-
-Each mitigation needs a stable ID, parent, order, title, definition, applicability guidance,
-evidence expectations, and editable maturity descriptions. The definition states the protection
-that can be assessed on its own. A family is an organization of definitions, not an assessment
-unit. Generic mechanisms and organization-approved implementations have separate records, linked
-by mitigation ID. Airbnb-specific implementations belong in a work repository.
-
-The existing IDs such as A04 should remain stable during import and later moves. A conceptual
-group such as traffic protection can contain admission limits, load shedding, fairness, and
-backpressure, because those protections can each have different evidence and coverage.
-
-### Each change-to-mitigation link has its own context.
-
-A link has a stable ID, change ID, mitigation ID, selection reason, and an applicability condition
-when needed. Links can attach at any change level. A kind can receive its vector's baseline links
-and show them as inherited, with the ancestor named. Its direct additions and exceptions are
-visible beside those inherited links. Removing a link from one change does not delete the
-mitigation definition or its other links.
-
-The migration starts with the 52 vector baseline sets and their conditional additions. The
-source-level sets remain available as coverage guidance when a vector is unknown; they must not
-be inherited as a requirement for every child. The ten source-independent conditional rules
-retain their conditions. Selection reasons and evidence cues also need to be migrated, rather
-than leaving the editor dependent on the earlier profile tables. Expected protections are a
-starting point for tailoring to a system, not a claim that the system implements them.
-
-Reordering records in the mitigation hierarchy changes display order. Dragging a mitigation
-onto a change creates a link; it does not move the mitigation out of its family. A deletion of a
-mitigation definition has a dialog that states its linked uses and has an undo path. Deletion of
-a change branch includes its links without deleting shared mitigation definitions.
-
-### Maturity descriptions and system findings have different records.
-
-A mitigation can have descriptions of increasing coverage, repeatability, observability, or
-exercise evidence, with examples and prerequisites. These descriptions need review before they
-become a universal ladder. An operator procedure can be an appropriate protection; automation
-alone does not establish better coverage or a successful recovery.
-
-An assessment records present, partial, absent, unknown, or not applicable for a named system
-boundary and mitigation. It also has the owner, outcomes, inspected scope, evidence, evidence
-date, and the reason for its judgment. Provider guarantees require evidence of that guarantee;
-missing access is unknown rather than absent. A documented procedure and an exercised procedure
-have different evidence. These findings belong to the system assessment, not to the shared
-mitigation definition or generic change link. A numeric maturity total needs calibration.
-
-### The next implementation can have three increments.
-
-1. The first increment has the mitigation hierarchy editor, imports all 106 definitions, and has double-click editing, CRUD, drag ordering, membership changes, persistence, and undo.
-2. The second increment has change-to-mitigation links and their reasons, conditions, exceptions, and evidence cues. It imports the vector baselines and conditional rules and has browsing from either side of a link.
-3. The third increment has the optional fourth column and a review of coverage, including unlinked changes, unlinked mitigations, and unresolved applicability. Both mitigation views edit the same records.
-
-The checks should establish that a definition edited in one view changes in the other, a shared
-mitigation can protect multiple changes, an unlinked mitigation remains available for authoring,
-and inherited links retain their reasons and conditions. Reparenting preserves IDs and links.
-The migration check must not prevent later edits from changing the seed taxonomy.
+## The original conceptual model remains background.
 
 This is a skill to help analyze software maturity. It can also assist with other risk and quality analyses, such as failure mode and effects analysis (FMEA).
 
@@ -272,5 +213,3 @@ Even if it's lots of separate services or piece of software.
 ## Test as early as possible
 
 ## Limit the amount of software you write, own, and depend on, even if it means less functionality
-
-## 
